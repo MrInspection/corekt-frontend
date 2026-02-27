@@ -1,0 +1,28 @@
+stages:
+  - check
+
+default:
+  image: node:22-alpine
+  before_script:
+    - corepack enable pnpm
+    - pnpm install --frozen-lockfile
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .pnpm-store/
+
+lint:
+  stage: check
+  script:
+    - pnpm run lint
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+typecheck:
+  stage: check
+  script:
+    - pnpm run typecheck
+  rules:
+    - if: $CI_COMMIT_BRANCH
