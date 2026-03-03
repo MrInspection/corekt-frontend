@@ -32,7 +32,7 @@ export default function useAuth() {
   });
 
   const logoutMutation = useToastMutation({
-    mutationFn: signOutAction,
+    mutationFn: () => signOutAction(),
     loadingMessage: "Logging out...",
     successMessage: "You are now logged out.",
     errorMessage: "An error occurred while logging out.",

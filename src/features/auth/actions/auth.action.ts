@@ -12,7 +12,7 @@ export const signInAction = actionClient
     await setSessionToken(account.token);
   });
 
-export const signOutAction = authAction.action(async () => {
+export const signOutAction = actionClient.action(async () => {
   return await deleteSessionToken();
 });
 

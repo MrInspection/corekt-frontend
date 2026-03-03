@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {CreateProjectSchema} from "@/features/projects/validation/projects.schema";
+import { CreateProjectSchema } from "@/features/projects/validation/projects.schema";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 
 type ProjectCardProps = {
