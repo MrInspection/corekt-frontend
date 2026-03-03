@@ -1,5 +1,5 @@
 import type React from "react";
-import { CreateProjectDialog } from "@/features/projects/components/create-project-dialog";
+import { CreateProjectDialog } from "@/features/projects/components/dialogs/create-project-dialog";
 
 const registry = {
   "create-project": CreateProjectDialog,
