@@ -11,6 +11,7 @@ type DialogManagerState = {
   openDialogs: DialogInstance[];
   openDialog: (id: DialogId, props?: unknown) => string; // returns instanceId
   closeDialog: (instanceId: string) => unknown;
+  closeCurrentDialog: () => void;
   closeAllDialogs: () => void;
 };
 
@@ -32,6 +33,11 @@ export const useDialogManager = create<DialogManagerState>((set) => ({
       openDialogs: state.openDialogs.filter(
         (dialog) => dialog.instanceId !== instanceId,
       ),
+    }));
+  },
+  closeCurrentDialog: () => {
+    set((state) => ({
+      openDialogs: state.openDialogs.slice(0, -1),
     }));
   },
   closeAllDialogs: () => set({ openDialogs: [] }),
