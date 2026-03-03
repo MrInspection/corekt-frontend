@@ -42,12 +42,12 @@ export function UserProfile() {
       <DropdownMenu>
         <DropdownMenuTrigger className="flex focus:rounded-full">
           <Avatar className="size-8">
-            <AvatarFallback className="size-8 bg-background">{currentUser?.username.charAt(0) ?? "U"}</AvatarFallback>
+            <AvatarFallback className="size-8 bg-background">
+              {currentUser?.username.charAt(0) ?? "U"}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="mb-1 w-(base-dropdown-menu-trigger-width) w-56 rounded-xl"
-        >
+        <DropdownMenuContent className="mb-1 w-(base-dropdown-menu-trigger-width) w-56 rounded-xl">
           <DropdownMenuGroup>
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -60,7 +60,9 @@ export function UserProfile() {
                   <span className="truncate font-medium text-foreground">
                     {currentUser?.username ?? "Unknown User"}
                   </span>
-                  <span className="truncate text-xs">{currentUser?.email ?? "Unknown email"}</span>
+                  <span className="truncate text-xs">
+                    {currentUser?.email ?? "Unknown email"}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
