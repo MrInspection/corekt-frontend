@@ -16,8 +16,8 @@ import { Icons } from "@/features/shared/ui/icons";
 export function ConnectTaigaDialog() {
   return (
     <Dialog>
-      <DialogTrigger render={<Button>Connect Account</Button>} />
-      <DialogContent className="w-96 gap-0 rounded-2xl p-0">
+      <DialogTrigger render={<Button>Connect account</Button>} />
+      <DialogContent className="w-96 gap-0 p-0">
         <DialogHeader className="gap-0 px-6 pt-10">
           <div className="flex items-center justify-center">
             <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border bg-background p-2 shadow-xs">

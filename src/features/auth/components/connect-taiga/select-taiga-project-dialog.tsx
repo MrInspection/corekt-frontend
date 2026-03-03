@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Icons } from "@/features/shared/ui/icons";
 
-export function TaigaProjectsDialog() {
+export function SelectTaigaProjectDialog() {
   const items = [
     { title: "TinyWallets", value: "rdx" },
     { title: "Pandaflow", value: "plus" },
