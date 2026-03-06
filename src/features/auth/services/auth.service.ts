@@ -1,6 +1,8 @@
 import type { Account, User } from "@/features/auth/types/auth.type";
 import type { LoginType } from "@/features/auth/validation/auth.schema";
-import { upfetch } from "@/lib/up-fetch";
+import { upfetch } from "@/lib/up-fetch/up-fetch";
+import {saveApiKeyAction} from "@/features/auth/actions/auth.action";
+import {encryptApiKey} from "@/lib/api-key-encryption";
 
 export const loginUser = async (payload: LoginType) => {
   return await upfetch<Account>("/auth/login", {
@@ -17,4 +19,10 @@ export const getCurrentUser = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+export const saveApiKey = async (plaintextApiKey: string) => {
+  const base64PublicKey = process.env.NEXT_PUBLIC_RSA_PUBLIC_KEY!;
+  const encrypted = await encryptApiKey(plaintextApiKey, base64PublicKey);
+  return await saveApiKeyAction(encrypted);
 };

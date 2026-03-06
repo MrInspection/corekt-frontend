@@ -7,6 +7,7 @@ import {
 } from "@/features/auth/actions/auth.action";
 import type { LoginType } from "@/features/auth/validation/auth.schema";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
+import {saveApiKey} from "@/features/auth/services/auth.service";
 
 export default function useAuth() {
   const router = useRouter();
@@ -44,8 +45,16 @@ export default function useAuth() {
     },
   });
 
+  const saveApiKeyMutation = useToastMutation({
+    mutationFn: (plaintextApiKey: string) => saveApiKey(plaintextApiKey),
+    loadingMessage: "Saving API key...",
+    successMessage: "API key saved.",
+    errorMessage: "Failed to save API key.",
+  });
+
   return {
     currentUser,
+    saveApiKeyMutation,
     loginMutation,
     logoutMutation,
   };
