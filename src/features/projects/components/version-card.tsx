@@ -165,10 +165,7 @@ export function VersionCard(props: VersionCardProps) {
       <div className="flex items-center justify-between border-t px-6 py-4">
         <div className="flex items-center gap-6">
           <ProjectCardStatus status={props.status} />
-          <div
-            className="flex items-center gap-1.5 text-muted-foreground text-sm"
-            hidden={isCompleted}
-          >
+          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
             <Calendar className="size-4" aria-hidden="true" />
             <span className="font-medium">{props.date}</span>
           </div>
