@@ -10,3 +10,9 @@ export const CreateProjectSchema = z.object({
 });
 
 export type ProjectType = z.infer<typeof CreateProjectSchema>;
+
+export const CreateVersionSchema = z.object({
+  title: z.string().nonempty({ error: "Title is required." }),
+});
+
+export type CreateVersionType = z.infer<typeof CreateVersionSchema>;

@@ -1,4 +1,7 @@
-import type { ProjectType } from "@/features/projects/validation/projects.schema";
+import type {
+  CreateVersionType,
+  ProjectType,
+} from "@/features/projects/validation/projects.schema";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
 
 export default function useProjects() {
@@ -26,7 +29,15 @@ export default function useProjects() {
     errorMessage: "Unable to delete project.",
   });
 
+  const createVersionMutation = useToastMutation({
+    mutationFn: async (payload: CreateVersionType) => {},
+    loadingMessage: "Creating version...",
+    successMessage: "Version created successfully!",
+    errorMessage: "Unable to create version.",
+  });
+
   return {
     createProjectMutation,
+    createVersionMutation,
   };
 }
