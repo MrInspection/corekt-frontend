@@ -5,9 +5,9 @@ import {
   signInAction,
   signOutAction,
 } from "@/features/auth/actions/auth.action";
+import { saveApiKey } from "@/features/auth/services/auth.service";
 import type { LoginType } from "@/features/auth/validation/auth.schema";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
-import {saveApiKey} from "@/features/auth/services/auth.service";
 
 export default function useAuth() {
   const router = useRouter();
