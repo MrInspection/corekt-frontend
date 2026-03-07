@@ -31,7 +31,7 @@ export function ConfirmationDialog({
 }: ConfirmationDialogProps) {
   return (
     <AlertDialog {...props}>
-      <AlertDialogContent className="rounded-2xl" size="sm">
+      <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogTitle>{content.title}</AlertDialogTitle>
           <AlertDialogDescription>{content.description}</AlertDialogDescription>

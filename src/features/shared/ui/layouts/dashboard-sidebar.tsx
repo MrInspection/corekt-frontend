@@ -14,8 +14,8 @@ import { Icons } from "@/features/shared/ui/icons";
 
 export function DashboardSidebar() {
   return (
-    <div className="mb-2 flex h-full w-14 flex-col items-center justify-center px-2 pb-2">
-      <header className="p-4">
+    <div className="flex h-full w-14 flex-col items-center justify-center space-y-4 px-2 py-4">
+      <header>
         <Link href="/">
           <Icons.corekt className="size-6" />
           <span className="sr-only">Corekt</span>
@@ -24,7 +24,7 @@ export function DashboardSidebar() {
       <nav className="grid gap-1.5">
         <NavigationLink href="/dashboard" label="Dashboard" icon={Home} />
       </nav>
-      <div className="mt-auto space-y-2">
+      <div className="mt-auto flex flex-col items-center">
         <UserProfile />
       </div>
     </div>

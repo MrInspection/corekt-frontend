@@ -24,8 +24,14 @@ export const getSessionToken = async () => {
 };
 
 export const deleteSessionToken = async () => {
+  console.log("deleteSessionToken called");
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.set(SESSION_COOKIE_NAME, "", {
+    ...SESSION_COOKIE_OPTIONS,
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  console.log("cookie deleted");
 };
 
 export const getUser = async () => {

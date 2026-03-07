@@ -5,6 +5,7 @@ import {
   signInAction,
   signOutAction,
 } from "@/features/auth/actions/auth.action";
+import { saveApiKey } from "@/features/auth/services/auth.service";
 import type { LoginType } from "@/features/auth/validation/auth.schema";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
 
@@ -32,7 +33,7 @@ export default function useAuth() {
   });
 
   const logoutMutation = useToastMutation({
-    mutationFn: signOutAction,
+    mutationFn: () => signOutAction(),
     loadingMessage: "Logging out...",
     successMessage: "You are now logged out.",
     errorMessage: "An error occurred while logging out.",
@@ -44,8 +45,16 @@ export default function useAuth() {
     },
   });
 
+  const saveApiKeyMutation = useToastMutation({
+    mutationFn: (plaintextApiKey: string) => saveApiKey(plaintextApiKey),
+    loadingMessage: "Saving API key...",
+    successMessage: "API key saved.",
+    errorMessage: "Failed to save API key.",
+  });
+
   return {
     currentUser,
+    saveApiKeyMutation,
     loginMutation,
     logoutMutation,
   };

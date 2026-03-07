@@ -133,14 +133,21 @@ function FilterPill({
         filter={filter}
         onUpdateValue={onUpdateValue}
       />
-      <Button
-        onClick={onRemove}
-        variant="outline"
-        size="icon-xs"
-        aria-label="Remove filter"
-      >
-        <X className="size-3" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              onClick={onRemove}
+              variant="outline"
+              size="icon-xs"
+              aria-label="Remove filter"
+            >
+              <X className="size-3" />
+            </Button>
+          }
+        />
+        <TooltipContent side="bottom">Remove Filter</TooltipContent>
+      </Tooltip>
     </ButtonGroup>
   );
 }
