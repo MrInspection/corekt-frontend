@@ -38,9 +38,9 @@ export function CreateProjectDialog({
     validators: {
       onSubmit: CreateProjectSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       onOpenChange(false);
-      await createProjectMutation.mutate(value);
+      createProjectMutation.mutate(value);
     },
   });
 

@@ -1,3 +1,6 @@
+"use client";
+
+import { useForm } from "@tanstack/react-form";
 import { CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,12 +11,31 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
+import { LoginSchema } from "@/features/auth/validation/auth.schema";
 import { Icons } from "@/features/shared/ui/icons";
 
 export function ConnectTaigaDialog() {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onSubmit: LoginSchema,
+    },
+    onSubmit: async ({ value }) => {
+      alert(JSON.stringify(value));
+    },
+  });
+
   return (
     <Dialog>
       <DialogTrigger render={<Button>Connect account</Button>} />
@@ -37,16 +59,62 @@ export function ConnectTaigaDialog() {
           </p>
         </DialogHeader>
         <div className="p-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input type="email" />
-            </div>
-            <div className="space-y-2">
-              <Label>Password</Label>
-              <PasswordInput />
-            </div>
-          </div>
+          <form
+            id="connect-taiga-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
+            <FieldGroup className="gap-4">
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid} className="grid gap-1.5">
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+              <form.Field
+                name="password"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid} className="grid gap-1.5">
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <PasswordInput
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+            </FieldGroup>
+          </form>
         </div>
         <div className="border-t p-6">
           <p className="font-semibold">Corekt would like to</p>
@@ -64,10 +132,12 @@ export function ConnectTaigaDialog() {
         </div>
         <DialogFooter className="border-t p-6 py-5">
           <div className="grid w-full grid-cols-2 gap-2">
-            <DialogClose render={<Button variant="outline" />}>
+            <DialogClose render={<Button variant="outline" type="button" />}>
               Cancel
             </DialogClose>
-            <Button>Connect</Button>
+            <Button type="submit" form="connect-taiga-form">
+              Connect
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>

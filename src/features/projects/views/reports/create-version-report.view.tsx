@@ -1,7 +1,7 @@
 "use client";
 
 import { XIcon } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
@@ -73,20 +73,10 @@ export function CreateVersionReportView() {
           <div className="text-muted-foreground text-sm">
             Step {currentStep} of {TOTAL_STEPS}
           </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 24, filter: "blur(4px)" }}
-              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, x: -24, filter: "blur(4px)" }}
-              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            >
-              {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
-              {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
-              {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
-              {currentStep === 4 && <UploadDataModelStep {...stepProps} />}
-            </motion.div>
-          </AnimatePresence>
+          {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
+          {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
+          {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
+          {currentStep === 4 && <UploadDataModelStep {...stepProps} />}
           <StepIndicator
             currentStep={currentStep}
             totalSteps={TOTAL_STEPS}
