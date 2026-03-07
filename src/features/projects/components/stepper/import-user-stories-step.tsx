@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConnectTaigaDialog } from "@/features/auth/components/connect-taiga/connect-taiga-dialog";
+import { SelectTaigaProjectDialog } from "@/features/auth/components/connect-taiga/select-taiga-project-dialog";
 import { Icons } from "@/features/shared/ui/icons";
 
 type ImportUserStoriesStepProps = {
@@ -40,10 +41,13 @@ export function ImportUserStoriesStep({
           </div>
         </div>
         <div className="mt-6 font-medium">Connect your Taiga account</div>
-        <div className="mt-0.5 mb-4 max-w-prose text-muted-foreground text-sm">
-          Bring your user stories to power Corekt coherence analysis.
+        <div className="mt-0.5 mb-4 w-[50%] max-w-prose text-center text-muted-foreground text-sm">
+          Bring your user stories as context to power Corekt coherence analysis.
         </div>
-        <ConnectTaigaDialog />
+        <div className="flex space-x-2">
+          <ConnectTaigaDialog />
+          <SelectTaigaProjectDialog />
+        </div>
       </div>
       <Button size="lg" className="mt-6 w-full" onClick={handleContinue}>
         Continue <ChevronRight className="size-4" />
