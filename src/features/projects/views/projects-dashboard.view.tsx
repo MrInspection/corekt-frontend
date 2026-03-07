@@ -17,6 +17,7 @@ import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
+import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import { PROJECT_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
@@ -46,7 +47,7 @@ export function ProjectsDashboardView() {
     <>
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
-          <h3 className="font-semibold">Dashboard</h3>
+          <DynamicBreadcrumb />
           <Tooltip>
             <TooltipTrigger
               render={

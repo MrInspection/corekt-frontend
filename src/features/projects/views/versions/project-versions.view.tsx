@@ -8,14 +8,6 @@ import {
   Trash,
 } from "lucide-react";
 import { useHotkeys } from "react-hotkeys-hook";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,6 +29,7 @@ import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
+import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
@@ -67,39 +60,26 @@ export function ProjectVersionsView() {
     <>
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Projects</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>TinyWallets</BreadcrumbPage>
-              </BreadcrumbItem>
-              <div className="flex h-5 items-center justify-center rounded-sm bg-muted p-1 px-1.5">
-                <span className="font-medium text-xs">
-                  {dummyVersions.length}
-                </span>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button size="icon-sm" variant="ghost" className="h-7" />
-                  }
-                >
-                  <MoreHorizontalIcon className="size-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Pencil className="size-4" /> Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Trash className="size-4" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <div className="inline-flex shrink-0 items-center gap-2">
+            <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button size="icon-sm" variant="ghost" className="h-7" />
+                }
+              >
+                <MoreHorizontalIcon className="size-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Pencil className="size-4" /> Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Trash className="size-4" /> Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-center gap-1.5">
             <Tooltip>
               <TooltipTrigger

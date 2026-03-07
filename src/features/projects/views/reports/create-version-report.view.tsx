@@ -9,6 +9,7 @@ import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bp
 import { UploadDataModelStep } from "@/features/projects/components/stepper/upload-data-model-step";
 import { UploadInterviewStep } from "@/features/projects/components/stepper/upload-interview-step";
 import { useDirtyNavigationBlocker } from "@/features/projects/hooks/use-navigation-blocker.hook";
+import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import {
   DashboardContent,
@@ -59,7 +60,10 @@ export function CreateVersionReportView() {
   return (
     <>
       <DashboardHeader className="flex items-center justify-between">
-        <h3 className="font-semibold">Report generator</h3>
+        <DynamicBreadcrumb
+          hrefOverrides={{ projects: "/dashboard" }}
+          skippedSegments={["version"]}
+        />
         <Button
           size="xs"
           variant="ghost"
