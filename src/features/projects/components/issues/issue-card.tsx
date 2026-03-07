@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import { MarkdownRenderer } from "@/features/shared/markdown/markdown-renderer";
 
-type IssueSeverity = "critical" | "major" | "minor";
+export type IssueSeverity = "critical" | "major" | "minor";
 
 type SeverityConfig = {
   label: string;
