@@ -14,41 +14,48 @@ import { FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useProjects } from "@/features/projects/hooks/use-projects.hook";
-import { ProjectFormSchema } from "@/features/projects/validation/projects.schema";
+import {
+  type Project,
+  ProjectFormSchema,
+} from "@/features/projects/validation/projects.schema";
 import { FormField } from "@/features/shared/form/form-field";
 
-export function CreateProjectDialog({
-  open,
-  onOpenChange,
-}: {
+type EditProjectDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}) {
-  const { createProjectMutation } = useProjects();
+  project: Project;
+};
+
+export function EditProjectDialog({
+  open,
+  onOpenChange,
+  project,
+}: EditProjectDialogProps) {
+  const { updateProjectMutation } = useProjects();
 
   const form = useForm({
     defaultValues: {
-      title: "",
-      description: "",
+      title: project.title,
+      description: project.description,
     },
     validators: {
       onSubmit: ProjectFormSchema,
     },
     onSubmit: ({ value }) => {
       onOpenChange(false);
-      createProjectMutation.mutate(value);
+      updateProjectMutation.mutate({ id: project.id, ...value });
     },
   });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-0 p-0">
-        <DialogHeader className="border-b p-6">
-          <DialogTitle>New Project</DialogTitle>
+      <DialogContent className="gap-0 divide-y rounded-2xl p-0">
+        <DialogHeader className="p-6">
+          <DialogTitle>Edit Project</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 p-6">
+        <div className="p-6">
           <form
-            id="create-project-form"
+            id={`edit-project-form-${project.id}`}
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit();
@@ -93,17 +100,12 @@ export function CreateProjectDialog({
             </FieldGroup>
           </form>
         </div>
-        <DialogFooter className="border-t p-6 py-4">
+        <DialogFooter className="p-6 py-4">
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>
-          <Button
-            type="submit"
-            form="create-project-form"
-            isLoading={createProjectMutation.isPending}
-            isLoadingText="Creating..."
-          >
-            Create project
+          <Button type="submit" form={`edit-project-form-${project.id}`}>
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -9,9 +9,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { dummyProjects } from "@/features/mock-data";
 import { ProjectCard } from "@/features/projects/components/project-card";
 import { ProjectEmptyState } from "@/features/projects/components/states/project-empty-state";
+import { ProjectsLoadingState } from "@/features/projects/components/states/projects-loading-state";
+import { useProjects } from "@/features/projects/hooks/use-projects.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
@@ -27,6 +28,9 @@ import {
 
 export function ProjectsDashboardView() {
   const dialogManager = useDialogManager();
+  const { getProjects } = useProjects();
+  const projects = getProjects.data ?? [];
+
   const {
     filters,
     addFilter,
@@ -36,7 +40,7 @@ export function ProjectsDashboardView() {
     clearFilters,
   } = useFilterState();
 
-  const visibleRows = dummyProjects.filter((row) =>
+  const visibleRows = projects.filter((row) =>
     matchesAllFilters(row, filters, PROJECT_FILTER_FIELDS),
   );
 
@@ -76,19 +80,18 @@ export function ProjectsDashboardView() {
         />
       </DashboardActionBar>
       <DashboardContent className="flex flex-col pt-16">
-        {dummyProjects.length === 0 ? (
+        {getProjects.isPending ? (
+          <ProjectsLoadingState />
+        ) : projects.length === 0 ? (
           <ProjectEmptyState />
         ) : visibleRows.length === 0 ? (
           <FilterEmptyState onClearFilters={clearFilters} />
         ) : (
-          <>
-            <div className="container grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-              {visibleRows.map((project) => (
-                <ProjectCard key={project.id} {...project} />
-              ))}
-            </div>
-            {/*<ProjectsLoadingState />*/}
-          </>
+          <div className="container grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+            {visibleRows.map((project) => (
+              <ProjectCard key={project.id} {...project} />
+            ))}
+          </div>
         )}
       </DashboardContent>
     </>

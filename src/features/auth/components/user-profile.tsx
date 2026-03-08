@@ -14,7 +14,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useAuth from "@/features/auth/hooks/use-auth.hook";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 
 export function UserProfile() {

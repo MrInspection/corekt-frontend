@@ -1,10 +1,13 @@
 import { saveApiKeyAction } from "@/features/auth/actions/auth.action";
-import type { Account, User } from "@/features/auth/types/auth.type";
-import type { LoginType } from "@/features/auth/validation/auth.schema";
+import type {
+  Account,
+  LoginForm,
+  User,
+} from "@/features/auth/validation/auth.schema";
 import { encryptApiKey } from "@/lib/api-key-encryption";
 import { upfetch } from "@/lib/up-fetch/up-fetch";
 
-export const loginUser = async (payload: LoginType) => {
+export const loginUser = async (payload: LoginForm) => {
   return await upfetch<Account>("/auth/login", {
     method: "POST",
     body: {

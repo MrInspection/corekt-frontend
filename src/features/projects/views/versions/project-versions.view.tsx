@@ -7,6 +7,8 @@ import {
   PlusIcon,
   Trash,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,14 +24,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { dummyVersions } from "@/features/mock-data";
+import { EditProjectDialog } from "@/features/projects/components/dialogs/edit-project-dialog";
 import { VersionEmptyState } from "@/features/projects/components/states/version-empty-state";
 import { VersionCard } from "@/features/projects/components/version-card";
+import {
+  useProject,
+  useProjects,
+} from "@/features/projects/hooks/use-projects.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
@@ -37,8 +45,13 @@ import {
   DashboardHeader,
 } from "@/features/shared/ui/layouts/dashboard-layout";
 
-export function ProjectVersionsView() {
+export function ProjectVersionsView({ projectId }: { projectId: string }) {
   const dialogManager = useDialogManager();
+  const router = useRouter();
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { deleteProjectMutation } = useProjects();
+
   const {
     filters,
     addFilter,
@@ -47,6 +60,7 @@ export function ProjectVersionsView() {
     removeFilter,
     clearFilters,
   } = useFilterState();
+  const { data: project } = useProject(projectId);
 
   const openCreateVersionDialog = () =>
     dialogManager.openDialog("create-version");
@@ -61,7 +75,11 @@ export function ProjectVersionsView() {
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
           <div className="inline-flex shrink-0 items-center gap-2">
-            <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
+            <DynamicBreadcrumb
+              key={project?.title}
+              hrefOverrides={{ projects: "/dashboard" }}
+              labelOverrides={{ projectId: project?.title ?? projectId }}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
@@ -71,10 +89,10 @@ export function ProjectVersionsView() {
                 <MoreHorizontalIcon className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setOpenEditDialog(true)}>
                   <Pencil className="size-4" /> Rename
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
                   <Trash className="size-4" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -141,6 +159,31 @@ export function ProjectVersionsView() {
           </div>
         )}
       </DashboardContent>
+
+      {project && (
+        <EditProjectDialog
+          open={openEditDialog}
+          onOpenChange={setOpenEditDialog}
+          project={project}
+        />
+      )}
+
+      <ConfirmationDialog
+        open={openDeleteDialog}
+        onOpenChange={setOpenDeleteDialog}
+        content={{
+          title: "Delete Project?",
+          description:
+            "This will permanently delete this project and its related data. This action cannot be undone.",
+          confirmText: "Delete",
+        }}
+        onConfirm={() =>
+          deleteProjectMutation.mutate(projectId, {
+            onSuccess: () => router.push("/dashboard"),
+          })
+        }
+        isLoading={deleteProjectMutation.isPending}
+      />
     </>
   );
 }

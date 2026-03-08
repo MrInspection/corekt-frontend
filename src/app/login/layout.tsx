@@ -25,7 +25,6 @@ export default function Layout({ children }: { children: ReactNode }) {
           I analyze your business deliverables, detect inconsistencies, and
           suggest precise improvements to enhance clarity and alignment.
         </p>
-        {/* TODO : Replace me with the actual product image (e.g. Report Page)*/}
         <Image
           src="/product-image.png"
           alt="Corekt Brand"

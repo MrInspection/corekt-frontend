@@ -22,13 +22,19 @@ export const PROJECT_FILTER_FIELDS: FilterField[] = [
     icon: <TextIcon className="size-3.5" />,
   },
   {
+    id: "description",
+    label: "Description",
+    type: "text",
+    icon: <TextIcon className="size-3.5" />,
+  },
+  {
     id: "totalVersions",
     label: "Number of versions",
     type: "number",
     icon: <GitBranch className="size-3.5" />,
   },
   {
-    id: "date",
+    id: "createdAt",
     label: "Creation Date",
     type: "date",
     icon: <CalendarIcon className="size-3.5" />,

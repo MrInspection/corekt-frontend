@@ -17,7 +17,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import useProjects from "@/features/projects/hooks/use-projects.hook";
+import { useVersions } from "@/features/projects/hooks/use-versions.hook";
 import { CreateVersionSchema } from "@/features/projects/validation/projects.schema";
 
 export function CreateVersionDialog({
@@ -27,7 +27,7 @@ export function CreateVersionDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { createVersionMutation } = useProjects();
+  const { createVersionMutation } = useVersions();
 
   const form = useForm({
     defaultValues: { title: "" },
@@ -91,12 +91,7 @@ export function CreateVersionDialog({
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>
-          <Button
-            type="submit"
-            form="create-project-form"
-            isLoading={createVersionMutation.isPending}
-            isLoadingText="Creating..."
-          >
+          <Button type="submit" form="create-project-form">
             Create version
           </Button>
         </DialogFooter>
