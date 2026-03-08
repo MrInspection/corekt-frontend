@@ -2,13 +2,13 @@
 
 import z from "zod";
 import { loginUser } from "@/features/auth/services/auth.service";
-import { LoginSchema } from "@/features/auth/validation/auth.schema";
+import { LoginFormSchema } from "@/features/auth/validation/auth.schema";
 import { deleteSessionToken, setSessionToken } from "@/lib/auth-session";
 import { actionClient, authAction } from "@/lib/safe-actions";
 import { upfetchServer } from "@/lib/up-fetch/up-fetch-server";
 
 export const signInAction = actionClient
-  .inputSchema(LoginSchema)
+  .inputSchema(LoginFormSchema)
   .action(async ({ parsedInput: payload }) => {
     const account = await loginUser(payload);
     await setSessionToken(account.token);

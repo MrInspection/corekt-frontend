@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { unauthorized } from "next/navigation";
 import { getCurrentUser } from "@/features/auth/services/auth.service";
-import type { User } from "@/features/auth/types/auth.type";
+import type { User } from "@/features/auth/validation/auth.schema";
 
 export const SESSION_COOKIE_NAME = "corekt-auth-token";
 
