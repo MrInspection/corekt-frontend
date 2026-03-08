@@ -77,9 +77,11 @@ export function DynamicBreadcrumb({
         !isParamOfSkippedSegment && !nonNavigableSet.has(segment);
 
       const label = isParam
-        ? mergedLabelOverrides[previousSegment]
-          ? `${mergedLabelOverrides[previousSegment]}${segment}`
-          : resolveSegmentLabel(segment, mergedLabelOverrides)
+        ? mergedLabelOverrides[overrideKey]
+          ? mergedLabelOverrides[overrideKey]
+          : mergedLabelOverrides[previousSegment]
+            ? `${mergedLabelOverrides[previousSegment]}${segment}`
+            : resolveSegmentLabel(segment, mergedLabelOverrides)
         : resolveSegmentLabel(segment, mergedLabelOverrides);
 
       return {
