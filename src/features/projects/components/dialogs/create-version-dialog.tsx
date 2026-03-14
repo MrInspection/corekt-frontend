@@ -18,21 +18,23 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useVersions } from "@/features/projects/hooks/use-versions.hook";
-import { CreateVersionSchema } from "@/features/projects/validation/projects.schema";
+import { VersionFormSchema } from "@/features/projects/validation/versions.schema";
 
 export function CreateVersionDialog({
   open,
   onOpenChange,
+  projectId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  projectId: string;
 }) {
-  const { createVersionMutation } = useVersions();
+  const { createVersionMutation } = useVersions({ projectId });
 
   const form = useForm({
     defaultValues: { title: "" },
     validators: {
-      onSubmit: CreateVersionSchema,
+      onSubmit: VersionFormSchema,
     },
     onSubmit: ({ value }) => {
       onOpenChange(false);
