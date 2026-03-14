@@ -2,6 +2,12 @@
 
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { dummyIssues } from "@/features/mock-data";
 import { ConfidenceScoreKpi } from "@/features/projects/components/issues/confidence-score-kpi";
 import {
@@ -44,11 +50,16 @@ export function ProjectReportView() {
             hrefOverrides={{ projects: "/dashboard" }}
             skippedSegments={["version"]}
           />
-          <div className="flex items-center gap-2">
-            <Button size="sm" variant="ghost" className="h-7">
+          <Tooltip>
+            <TooltipTrigger render={<Button size="xs" variant="ghost" />}>
               <Download /> Export
-            </Button>
-          </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="end">
+              <span className="mr-1.5">Export your report</span>
+              <Kbd>E</Kbd> <span className="text-muted-foreground">then</span>{" "}
+              <Kbd>R</Kbd>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </DashboardHeader>
       <DashboardActionBar className="bg-gray-50">
@@ -66,12 +77,12 @@ export function ProjectReportView() {
         <div className="container my-16 max-w-5xl">
           <section className="grid gap-4 lg:grid-cols-2">
             <TotalIssuesKpi
-              issuesCount={0}
+              issuesCount={20}
               counts={{
-                resolved: 0,
-                critical: 0,
-                major: 0,
-                minor: 0,
+                resolved: 6,
+                critical: 8,
+                major: 7,
+                minor: 5,
               }}
             />
             <ConfidenceScoreKpi score={100} />

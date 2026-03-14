@@ -11,29 +11,36 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { LoginFormSchema } from "@/features/auth/validation/auth.schema";
 import { FormField } from "@/features/shared/form/form-field";
 import { Icons } from "@/features/shared/ui/icons";
+import { useTaiga } from "@/features/taiga/hooks/use-taiga.hook";
+import {
+  TaigaLoginFormSchema,
+  type TaigaProject,
+} from "@/features/taiga/validator/taiga.schema";
 
-export function ConnectTaigaDialog() {
+type ConnectTaigaDialogProps = {
+  onConnected: (projects: TaigaProject[]) => void;
+};
+
+export function ConnectTaigaDialog({ onConnected }: ConnectTaigaDialogProps) {
+  const { loginMutation } = useTaiga();
+
   const form = useForm({
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validators: {
-      onSubmit: LoginFormSchema,
+      onSubmit: TaigaLoginFormSchema,
     },
     onSubmit: async ({ value }) => {
-      alert(JSON.stringify(value));
+      loginMutation.mutate(value, {
+        onSuccess: (projects) => onConnected(projects ?? []),
+      });
     },
   });
 
@@ -68,9 +75,9 @@ export function ConnectTaigaDialog() {
             }}
           >
             <FieldGroup className="gap-4">
-              <form.Field name="email">
+              <form.Field name="username">
                 {(field) => (
-                  <FormField field={field} label="Email">
+                  <FormField field={field} label="Username">
                     {(isInvalid) => (
                       <Input
                         id={field.name}
@@ -79,7 +86,6 @@ export function ConnectTaigaDialog() {
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
-                        placeholder="name@example.com"
                       />
                     )}
                   </FormField>
@@ -124,7 +130,12 @@ export function ConnectTaigaDialog() {
             <DialogClose render={<Button variant="outline" type="button" />}>
               Cancel
             </DialogClose>
-            <Button type="submit" form="connect-taiga-form">
+            <Button
+              type="submit"
+              form="connect-taiga-form"
+              isLoading={loginMutation.isPending}
+              isLoadingText="Connecting..."
+            >
               Connect
             </Button>
           </div>
