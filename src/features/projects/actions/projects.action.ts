@@ -47,7 +47,7 @@ export const updateProjectAction = authAction
 export const deleteProjectAction = authAction
   .inputSchema(z.object({ id: z.uuid() }))
   .action(async ({ parsedInput: { id: projectId } }) => {
-    return await upfetchServer<Project>(`/projects/${projectId}`, {
+    return await upfetchServer(`/projects/${projectId}`, {
       method: "DELETE",
     });
   });

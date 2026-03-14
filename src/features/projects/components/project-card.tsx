@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: Needed to stop propagation */
 "use client";
 
 import { formatDate } from "date-fns";
@@ -93,7 +92,7 @@ export function ProjectCard(props: Project) {
         </div>
       </div>
 
-      <div onClick={(e) => e.stopPropagation()}>
+      <div role="alertdialog" onClick={(e) => e.stopPropagation()}>
         <ConfirmationDialog
           open={openDeleteDialog}
           onOpenChange={setOpenDeleteDialog}
@@ -108,7 +107,7 @@ export function ProjectCard(props: Project) {
         />
       </div>
 
-      <div onClick={(e) => e.stopPropagation()}>
+      <div role="dialog" onClick={(e) => e.stopPropagation()}>
         <EditProjectDialog
           open={openEditDialog}
           onOpenChange={setOpenEditDialog}
