@@ -55,29 +55,29 @@ export const VERSION_FILTER_FIELDS: FilterField[] = [
     icon: <TagIcon className="size-3.5" />,
     options: [
       {
-        value: "draft",
+        value: "DRAFT",
         label: "Draft",
         icon: <ClockIcon className="size-3.5" />,
       },
       {
-        value: "in-progress",
+        value: "IN_PROGRESS",
         label: "In progress",
         icon: <Loader className="size-3.5" />,
       },
       {
-        value: "completed",
+        value: "COMPLETED",
         label: "Completed",
         icon: <CheckIcon className="size-3.5" />,
       },
       {
-        value: "failed",
+        value: "FAILED",
         label: "Failed",
         icon: <XIcon className="size-3.5" />,
       },
     ],
   },
   {
-    id: "date",
+    id: "createdAt",
     label: "Creation Date",
     type: "date",
     icon: <CalendarIcon className="size-3.5" />,

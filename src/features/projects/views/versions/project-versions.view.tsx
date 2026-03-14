@@ -23,14 +23,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { dummyVersions } from "@/features/mock-data";
 import { EditProjectDialog } from "@/features/projects/components/dialogs/edit-project-dialog";
 import { VersionEmptyState } from "@/features/projects/components/states/version-empty-state";
+import { VersionsLoadingState } from "@/features/projects/components/states/versions-loading-state";
 import { VersionCard } from "@/features/projects/components/version-card";
 import {
   useProject,
   useProjects,
 } from "@/features/projects/hooks/use-projects.hook";
+import { useVersions } from "@/features/projects/hooks/use-versions.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
@@ -52,6 +53,9 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { deleteProjectMutation } = useProjects();
 
+  const { getVersions } = useVersions({ projectId });
+  const versions = getVersions.data ?? [];
+
   const {
     filters,
     addFilter,
@@ -60,13 +64,16 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
     removeFilter,
     clearFilters,
   } = useFilterState();
+
   const { data: project } = useProject(projectId);
 
   const openCreateVersionDialog = () =>
-    dialogManager.openDialog("create-version");
+    dialogManager.openDialog("create-version", {
+      projectId,
+    });
   useHotkeys("n>v", openCreateVersionDialog);
 
-  const visibleRows = dummyVersions.filter((row) =>
+  const visibleRows = versions.filter((row) =>
     matchesAllFilters(row, filters, VERSION_FILTER_FIELDS),
   );
 
@@ -135,7 +142,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
           </div>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-50">
+      <DashboardActionBar className="bg-gray-25">
         <FilterBar
           fields={VERSION_FILTER_FIELDS}
           filters={filters}
@@ -147,14 +154,20 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
         />
       </DashboardActionBar>
       <DashboardContent className="flex flex-col pt-16">
-        {dummyVersions.length === 0 ? (
+        {getVersions.isPending ? (
+          <VersionsLoadingState />
+        ) : versions.length === 0 ? (
           <VersionEmptyState />
         ) : visibleRows.length === 0 ? (
           <FilterEmptyState onClearFilters={clearFilters} />
         ) : (
           <div className="container grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            {visibleRows.map((item) => (
-              <VersionCard key={item.id} {...item} />
+            {visibleRows.map((version) => (
+              <VersionCard
+                key={version.id}
+                projectId={projectId}
+                {...version}
+              />
             ))}
           </div>
         )}

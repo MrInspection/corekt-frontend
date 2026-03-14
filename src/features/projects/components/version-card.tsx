@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "date-fns";
 import {
   Calendar,
   Check,
@@ -14,52 +15,47 @@ import {
   Trash,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { EditVersionDialog } from "@/features/projects/components/dialogs/edit-version-dialog";
+import { useVersions } from "@/features/projects/hooks/use-versions.hook";
+import type { Version } from "@/features/projects/validation/versions.schema";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 
-type ProjectStatus = VersionCardProps["status"];
+type ProjectStatus = Version["status"];
 
 function ProjectCardStatus({ status }: { status: ProjectStatus }) {
   switch (status) {
-    case "draft":
+    case "DRAFT":
       return (
         <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
           <Clock className="size-4" />
           <span className="font-medium">Draft</span>
         </div>
       );
-    case "in-progress":
+    case "IN_PROGRESS":
       return (
         <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
           <Spinner />
           <span className="font-medium">Analysing...</span>
         </div>
       );
-    case "completed":
+    case "COMPLETED":
       return (
         <div className="flex items-center gap-1.5 text-sm text-success-600">
           <Check className="size-4" />
           <span className="font-medium">Completed</span>
         </div>
       );
-    case "failed":
+    case "FAILED":
       return (
         <div className="flex items-center gap-1.5 text-error-600 text-sm">
           <X className="size-4" />
@@ -69,70 +65,30 @@ function ProjectCardStatus({ status }: { status: ProjectStatus }) {
   }
 }
 
-type VersionCardProps = {
-  id: string;
-  title: string;
-  version: number;
-  date: string;
-} & (
-  | { status: "draft" }
-  | { status: "in-progress" }
-  | { status: "failed" }
-  | {
-      status: "completed";
-      issues: {
-        minor: number;
-        major: number;
-        critical: number;
-        correct: number;
-      };
-    }
-);
-
-export function VersionCard(props: VersionCardProps) {
-  const isCompleted = props.status === "completed";
+export function VersionCard(props: Version & { projectId: string }) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
 
-  const deleteVersionDialog = (
-    <ConfirmationDialog
-      content={{
-        title: "Delete Version?",
-        description:
-          "This will permanently delete this report version and its related data. This action cannot be undone.",
-        confirmText: "Delete",
-        isLoadingText: "Deleting...",
-      }}
-      open={openDeleteDialog}
-      onOpenChange={setOpenDeleteDialog}
-      onConfirm={() => alert("Deleted version")}
-    />
-  );
-
-  const editVersionDialog = (
-    <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-      <DialogContent className="gap-0 divide-y rounded-2xl p-0">
-        <DialogHeader className="p-6">
-          <DialogTitle>Edit Version Control</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 p-6">
-          <div className="space-y-2">
-            <Label>Title</Label>
-            <Input placeholder={props.title} />
-          </div>
-        </div>
-        <DialogFooter className="p-6 py-4">
-          <Button variant="outline" onClick={() => setOpenEditDialog(false)}>
-            Cancel
-          </Button>
-          <Button>Save Changes</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
+  const { deleteVersionMutation } = useVersions({ projectId: props.projectId });
+  const router = useRouter();
 
   return (
-    <section className="max-h-fit cursor-pointer rounded-xl border bg-card shadow-xs transition-transform duration-150 hover:-translate-y-0.5 hover:border-gray-300 hover:border-b-4 hover:shadow-md">
+    <div
+      className="max-h-fit cursor-pointer rounded-xl border bg-card shadow-xs transition-transform duration-150 hover:-translate-y-0.5 hover:border-gray-300 hover:border-b-4 hover:shadow-md"
+      role="button"
+      tabIndex={0}
+      onClick={() => {
+        if (props.status === "COMPLETED") {
+          router.push(
+            `/projects/${props.projectId}/version/${props.id}/report`,
+          );
+        } else {
+          router.push(
+            `/projects/${props.projectId}/version/${props.id}/generate`,
+          );
+        }
+      }}
+    >
       <div className="flex items-start justify-between gap-4 px-6 py-5">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 rounded-full bg-indigo-100/80 px-2.5 py-0.5 text-indigo-800 text-sm">
@@ -143,6 +99,7 @@ export function VersionCard(props: VersionCardProps) {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger
+            onClick={(e) => e.stopPropagation()}
             render={
               <Button variant="ghost" size="icon-xs" className="rounded-full">
                 <MoreVertical className="size-4" />
@@ -150,12 +107,20 @@ export function VersionCard(props: VersionCardProps) {
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setOpenEditDialog(true)}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenEditDialog(true);
+              }}
+            >
               <Pencil className="size-4" /> Edit
             </DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"
-              onClick={() => setOpenDeleteDialog(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenDeleteDialog(true);
+              }}
             >
               <Trash className="size-4" /> Delete
             </DropdownMenuItem>
@@ -167,14 +132,16 @@ export function VersionCard(props: VersionCardProps) {
           <ProjectCardStatus status={props.status} />
           <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
             <Calendar className="size-4" aria-hidden="true" />
-            <span className="font-medium">{props.date}</span>
+            <span className="font-medium">
+              {formatDate(props.createdAt, "MMM dd, yyyy")}
+            </span>
           </div>
         </div>
-        {isCompleted && (
+        {props.status === "COMPLETED" && (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-sm">
               <CheckCircle className="size-4 text-success-600" />
-              <span>{props.issues.correct}</span>
+              <span>{props.issues.resolved}</span>
             </div>
             <div className="flex items-center gap-1 text-sm">
               <CircleDot className="size-4 text-gray-500" />
@@ -191,8 +158,29 @@ export function VersionCard(props: VersionCardProps) {
           </div>
         )}
       </div>
-      {deleteVersionDialog}
-      {editVersionDialog}
-    </section>
+
+      <div role="alertdialog" onClick={(e) => e.stopPropagation()}>
+        <ConfirmationDialog
+          content={{
+            title: "Delete Version?",
+            description:
+              "This will permanently delete this report version and its related data. This action cannot be undone.",
+            confirmText: "Delete",
+          }}
+          open={openDeleteDialog}
+          onOpenChange={setOpenDeleteDialog}
+          onConfirm={() => deleteVersionMutation.mutate(props.id)}
+        />
+      </div>
+
+      <div role="dialog" onClick={(e) => e.stopPropagation()}>
+        <EditVersionDialog
+          open={openEditDialog}
+          onOpenChange={setOpenEditDialog}
+          projectId={props.projectId}
+          version={props}
+        />
+      </div>
+    </div>
   );
 }
