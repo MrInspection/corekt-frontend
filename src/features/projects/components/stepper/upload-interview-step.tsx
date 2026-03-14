@@ -1,7 +1,11 @@
 "use client";
 
+import { useForm } from "@tanstack/react-form";
 import { ChevronRight } from "lucide-react";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { uploadFileAction } from "@/features/projects/actions/files.action";
+import { DeliverableUploadSchema } from "@/features/projects/validation/files.schema";
 import FileUpload from "@/features/shared/upload/file-uploader";
 
 type UploadInterviewStepProps = {
@@ -13,6 +17,28 @@ export function UploadInterviewStep({
   onStart,
   onNext,
 }: UploadInterviewStepProps) {
+  const { projectId, version } = useParams<{
+    projectId: string;
+    version: string;
+  }>();
+  const form = useForm({
+    defaultValues: {
+      file: null as File | null,
+    },
+    validators: {
+      onSubmit: DeliverableUploadSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await uploadFileAction({
+        projectId,
+        versionId: version,
+        fileType: "INTERVIEW",
+        file: value.file!,
+      });
+      onNext();
+    },
+  });
+
   const handleContinue = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     onNext();
@@ -28,10 +54,51 @@ export function UploadInterviewStep({
         stakeholders. This helps Corekt understand the intent behind your
         analysis and cross-check it against your other artifacts.
       </p>
-      <FileUpload className="mt-10" />
-      <Button size="lg" className="mt-6 w-full" onClick={handleContinue}>
-        Continue <ChevronRight className="size-4" />
-      </Button>
+      <form
+        id="upload-interview-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+      >
+        <form.Field name="file">
+          {(field) => (
+            <FileUpload
+              className="mt-10"
+              accept=".pdf"
+              description="PDF format, up to 10 MB."
+              onFileChange={(file) => {
+                if (file) onStart();
+                field.handleChange(file);
+              }}
+              externalErrors={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors.map(String)
+                  : []
+              }
+            />
+          )}
+        </form.Field>
+        <form.Subscribe
+          selector={(state) => ({
+            isSubmitting: state.isSubmitting,
+            file: state.values.file,
+          })}
+        >
+          {({ isSubmitting, file }) => (
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-6 w-full"
+              disabled={!file || isSubmitting}
+              isLoading={isSubmitting}
+              isLoadingText="Uploading..."
+            >
+              Continue <ChevronRight className="size-4" />
+            </Button>
+          )}
+        </form.Subscribe>
+      </form>
     </>
   );
 }
