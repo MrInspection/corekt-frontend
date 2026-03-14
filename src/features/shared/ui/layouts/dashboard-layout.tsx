@@ -9,7 +9,7 @@ function DashboardHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 flex h-10 items-center rounded-t-md border-b bg-background px-8 text-sm",
+        "sticky top-0 z-50 flex h-10 shrink-0 items-center rounded-t-lg border-b bg-background px-4 text-sm",
         className,
       )}
       {...props}
@@ -28,7 +28,7 @@ function DashboardActionBar({
   return (
     <div
       className={cn(
-        "sticky top-10 z-50 flex items-center justify-between border-b bg-background px-8 py-1.5",
+        "sticky top-10 z-50 flex items-center justify-between border-b bg-background px-4 py-1.5",
         className,
       )}
       {...props}
@@ -64,7 +64,7 @@ function DashboardLayout({ children, className }: DashboardProps) {
   return (
     <main
       className={cn(
-        "relative my-2 mr-2 flex flex-1 flex-col rounded-md border bg-background shadow-sm",
+        "relative my-2 mr-2 flex flex-1 flex-col rounded-lg border bg-background shadow-xs",
         className,
       )}
       data-slot="dashboard-layout"

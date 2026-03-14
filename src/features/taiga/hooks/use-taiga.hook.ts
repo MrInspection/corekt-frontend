@@ -22,7 +22,9 @@ export function useTaiga() {
     mutationFn: async (payload: TaigaLoginForm) => {
       await taigaLoginAction(payload);
       const result = await getTaigaProjectsAction();
-      const projects = Object.entries(result?.data?.projects ?? {}).map(([name, id]) => ({ name, id }));
+      const projects = Object.entries(result?.data?.projects ?? {}).map(
+        ([name, id]) => ({ name, id }),
+      );
       setTaigaProjects(projects);
       return projects;
     },

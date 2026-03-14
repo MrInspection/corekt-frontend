@@ -99,5 +99,5 @@ function StoryCard({ story }: { story: UserStory }) {
         </p>
       )}
     </div>
-  )
+  );
 }
