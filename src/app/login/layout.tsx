@@ -6,18 +6,16 @@ import { Button } from "@/components/ui/button";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <main className="grid h-screen grid-cols-1 gap-8 p-4 xl:grid-cols-3 xl:gap-12">
-      <section>
-        <Link href="/">
-          <Button variant="ghost" className="absolute top-6 left-6" size="sm">
+    <main className="grid h-screen grid-cols-1 p-4 xl:grid-cols-3 xl:gap-12">
+      <section className="relative flex items-center justify-center">
+        <Link href="/" className="absolute top-0 left-0">
+          <Button variant="ghost" size="sm">
             <ChevronLeftIcon /> Back
           </Button>
         </Link>
-        <div className="container relative flex h-full w-full max-w-md flex-col justify-center">
-          {children}
-        </div>
+        <div className="w-full max-w-md">{children}</div>
       </section>
-      <section className="relative col-span-2 overflow-hidden rounded-4xl border bg-gray-100 p-16 shadow-xs max-xl:hidden">
+      <section className="relative col-span-2 overflow-hidden rounded-lg border bg-gray-100 p-16 shadow-xs max-xl:hidden">
         <h3 className="max-w-(--breakpoint-lg) font-semibold text-4xl tracking-tight">
           Hi, I'm your AI powered coherence tool, Corekt.
         </h3>
@@ -25,15 +23,16 @@ export default function Layout({ children }: { children: ReactNode }) {
           I analyze your business deliverables, detect inconsistencies, and
           suggest precise improvements to enhance clarity and alignment.
         </p>
-        <Image
-          src="/product-image.png"
-          alt="Corekt Brand"
-          sizes="30"
-          loading="lazy"
-          width={0}
-          height={0}
-          className="absolute top-48 w-400! shrink-0 select-none"
-        />
+        <div className="absolute top-48 right-0 bottom-0 left-14">
+          <Image
+            src="/product-image.png"
+            alt="Corekt product preview"
+            fill
+            priority
+            sizes="(min-width: 1280px) 66vw, 0px"
+            className="select-none object-cover object-top-left"
+          />
+        </div>
       </section>
     </main>
   );

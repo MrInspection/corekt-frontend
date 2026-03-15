@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams, usePathname } from "next/navigation";
 import React from "react";
 import {
@@ -10,6 +11,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { projectQueryKey } from "@/features/projects/hooks/use-projects.hook";
+import { versionQueryKey } from "@/features/projects/hooks/use-versions.hook";
 
 type SegmentOverrides = Record<string, string>;
 
@@ -40,8 +43,42 @@ export function DynamicBreadcrumb({
 }: DynamicBreadcrumbProps) {
   const pathname = usePathname();
   const params = useParams();
+  const queryClient = useQueryClient();
 
-  const mergedLabelOverrides = { ...defaultLabelOverrides, ...labelOverrides };
+  // Extract dynamic IDs from params
+  const projectId =
+    typeof params.projectId === "string" ? params.projectId : undefined;
+  const versionId =
+    typeof params.version === "string" ? params.version : undefined;
+  const userId = queryClient.getQueryData<{ id: string }>(["user", "me"])?.id;
+
+  // Get cached project and version data
+  const cachedProject =
+    projectId && userId
+      ? queryClient.getQueryData<{ title: string }>(
+          projectQueryKey(userId, projectId),
+        )
+      : undefined;
+  const cachedVersion =
+    projectId && versionId
+      ? queryClient.getQueryData<{ version: number }>(
+          versionQueryKey(projectId, versionId),
+        )
+      : undefined;
+
+  // Build smart label overrides using cached data
+  const smartLabelOverrides: SegmentOverrides = { ...labelOverrides };
+  if (cachedProject?.title && projectId) {
+    smartLabelOverrides[projectId] = cachedProject.title;
+  }
+  if (cachedVersion?.version && versionId) {
+    smartLabelOverrides[versionId] = `v${cachedVersion.version}`;
+  }
+
+  const mergedLabelOverrides = {
+    ...defaultLabelOverrides,
+    ...smartLabelOverrides,
+  };
   const skippedSet = new Set(skippedSegments);
   const nonNavigableSet = new Set(nonNavigableSegments);
 

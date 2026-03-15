@@ -93,7 +93,7 @@ export function LoginForm() {
       >
         Continue <ChevronRight className="size-4" />
       </Button>
-      <div className="absolute bottom-8 left-1/2 mx-auto w-max max-w-[60%] -translate-x-1/2 text-center text-muted-foreground text-xs">
+      <div className="absolute bottom-8 left-1/2 mx-auto w-max max-w-[40%] -translate-x-1/2 text-center text-muted-foreground text-xs">
         By creating an account, you agree to Corekt's{" "}
         <Link
           href="/legal/terms-and-conditions"

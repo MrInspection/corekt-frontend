@@ -15,27 +15,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
-import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 
 export function UserProfile() {
   const { logoutMutation, currentUser } = useAuth();
   useHotkeys("l>o", () => setOpenConfirmationDialog(true));
   const [openConfirmationDialog, setOpenConfirmationDialog] =
     useState<boolean>(false);
-
-  const logoutConfirmationDialog = (
-    <ConfirmationDialog
-      content={{
-        title: "Leaving already?",
-        description: "You’ll need to sign in again to access your workspace.",
-        confirmText: "Log out",
-      }}
-      open={openConfirmationDialog}
-      onOpenChange={setOpenConfirmationDialog}
-      onConfirm={() => logoutMutation.mutate()}
-      isLoading={logoutMutation.isPending}
-    />
-  );
 
   return (
     <>
@@ -94,7 +80,21 @@ export function UserProfile() {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      {logoutConfirmationDialog}
+
+      <div role="alertdialog">
+        <ConfirmationDialog
+          content={{
+            title: "Leaving already?",
+            description:
+              "You’ll need to sign in again to access your workspace.",
+            confirmText: "Log out",
+          }}
+          open={openConfirmationDialog}
+          onOpenChange={setOpenConfirmationDialog}
+          onConfirm={() => logoutMutation.mutate()}
+          isLoading={logoutMutation.isPending}
+        />
+      </div>
     </>
   );
 }

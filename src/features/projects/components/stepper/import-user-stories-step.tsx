@@ -91,10 +91,10 @@ export function ImportUserStoriesStep({
 
 function StoryCard({ story }: { story: UserStory }) {
   return (
-    <div className="flex flex-col gap-1 rounded border px-4 py-3">
+    <div className="flex flex-col gap-1 rounded-lg border px-4 py-3">
       <p className="font-medium text-sm">{story.title}</p>
       {story.description && (
-        <p className="line-clamp-2 text-muted-foreground text-xs">
+        <p className="mt-0.5 line-clamp-2 text-muted-foreground text-xs">
           {story.description}
         </p>
       )}
