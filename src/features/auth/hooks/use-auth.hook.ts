@@ -2,12 +2,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
   getCurrentUserAction,
+  saveApiKeyAction,
   signInAction,
   signOutAction,
 } from "@/features/auth/actions/auth.action";
-import { saveApiKey } from "@/features/auth/services/auth.service";
 import type { LoginForm } from "@/features/auth/validation/auth.schema";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
+import { encryptApiKey } from "@/lib/api-key-encryption";
 
 export function useAuth() {
   const router = useRouter();
@@ -47,7 +48,15 @@ export function useAuth() {
   });
 
   const saveApiKeyMutation = useToastMutation({
-    mutationFn: (plaintextApiKey: string) => saveApiKey(plaintextApiKey),
+    mutationFn: async (plaintextApiKey: string) => {
+      const base64PublicKey = process.env.NEXT_PUBLIC_RSA_PUBLIC_KEY;
+      if (!base64PublicKey) {
+        throw new Error("Missing NEXT_PUBLIC_RSA_PUBLIC_KEY");
+      }
+
+      const encrypted = await encryptApiKey(plaintextApiKey, base64PublicKey);
+      return await saveApiKeyAction(encrypted);
+    },
     loadingMessage: "Saving API key...",
     successMessage: "API key saved.",
     errorMessage: "Failed to save API key.",
