@@ -70,7 +70,7 @@ export function SelectTaigaProjectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-[72svh] flex-col gap-0 p-0 md:min-w-110">
+      <DialogContent className="flex h-[64svh] w-96 flex-col gap-0 p-0">
         <DialogHeader className="gap-0.5 border-b p-6">
           <DialogTitle className="text-base">Import User Stories</DialogTitle>
           <DialogDescription className="text-pretty">
@@ -89,7 +89,7 @@ export function SelectTaigaProjectDialog({
             </InputGroupAddon>
           </InputGroup>
         </div>
-        <div className="grid h-full divide-y overflow-y-scroll">
+        <div className="grid h-full content-start divide-y overflow-y-scroll">
           {visibleProjects.length === 0 ? (
             <EmptyState className="flex items-center justify-center">
               <EmptyStateIcon icon={FolderIcon} />
