@@ -23,6 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { EditProjectDialog } from "@/features/projects/components/dialogs/edit-project-dialog";
 import { VersionEmptyState } from "@/features/projects/components/states/version-empty-state";
 import { VersionsLoadingState } from "@/features/projects/components/states/versions-loading-state";
@@ -38,7 +39,7 @@ import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.typ
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
@@ -51,7 +52,8 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
   const router = useRouter();
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { deleteProjectMutation } = useProjects();
+  const { userId } = useAuth();
+  const { deleteProjectMutation } = useProjects(userId);
 
   const { getVersions } = useVersions({ projectId });
   const versions = getVersions.data ?? [];
@@ -65,7 +67,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
     clearFilters,
   } = useFilterState();
 
-  const { data: project } = useProject(projectId);
+  const { data: project } = useProject(projectId, userId);
 
   const openCreateVersionDialog = () =>
     dialogManager.openDialog("create-version", {
@@ -82,11 +84,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
           <div className="inline-flex shrink-0 items-center gap-2">
-            <DynamicBreadcrumb
-              key={project?.title}
-              hrefOverrides={{ projects: "/dashboard" }}
-              labelOverrides={{ projectId: project?.title ?? projectId }}
-            />
+            <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={

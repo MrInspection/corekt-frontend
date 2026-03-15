@@ -2,15 +2,19 @@
 
 import { XIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
 import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bpmn-step";
 import { UploadDataModelStep } from "@/features/projects/components/stepper/upload-data-model-step";
 import { UploadInterviewStep } from "@/features/projects/components/stepper/upload-interview-step";
 import { useDirtyNavigationBlocker } from "@/features/projects/hooks/use-navigation-blocker.hook";
+import { useProject } from "@/features/projects/hooks/use-projects.hook";
+import { useVersion } from "@/features/projects/hooks/use-versions.hook";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import {
   DashboardContent,
   DashboardHeader,
@@ -21,10 +25,19 @@ const TOTAL_STEPS = 4;
 
 export function CreateVersionReportView() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [hasStarted, setHasStarted] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
   const { controls } = useDirtyNavigationBlocker({ isDirty: hasStarted });
+  const params = useParams<{ projectId: string; version: string }>();
+
+  const { userId } = useAuth();
+  useProject(params.projectId, userId);
+
+  const { data: version } = useVersion({
+    projectId: params.projectId,
+    versionId: params.version,
+  });
 
   const goToNextStep = () =>
     setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
@@ -34,34 +47,12 @@ export function CreateVersionReportView() {
     onNext: goToNextStep,
   };
 
-  const handleCancel = () => {
-    if (hasStarted) {
-      setOpenCancelDialog(true);
-    }
-  };
-
-  const cancelConfirmationDialog = (
-    <ConfirmationDialog
-      content={{
-        title: "Cancel creation?",
-        description:
-          "Are you sure you want to cancel the creation process of your report?",
-        confirmText: "Yes, quit",
-      }}
-      open={openCancelDialog}
-      onOpenChange={setOpenCancelDialog}
-      onConfirm={() => {
-        setHasStarted(false);
-        setOpenCancelDialog(false);
-      }}
-    />
-  );
-
   return (
     <>
       <DashboardHeader className="flex items-center justify-between">
         <DynamicBreadcrumb
           hrefOverrides={{ projects: "/dashboard" }}
+          labelOverrides={{ version: `v${version?.version}` }}
           skippedSegments={["version"]}
         />
         <Button
@@ -88,7 +79,23 @@ export function CreateVersionReportView() {
           />
         </DashboardContent>
       </motion.div>
-      {cancelConfirmationDialog}
+
+      <div role="alertdialog">
+        <ConfirmationDialog
+          content={{
+            title: "Cancel creation?",
+            description:
+              "Are you sure you want to cancel the creation process of your report?",
+            confirmText: "Yes, quit",
+          }}
+          open={openCancelDialog}
+          onOpenChange={setOpenCancelDialog}
+          onConfirm={() => {
+            setHasStarted(false);
+            setOpenCancelDialog(false);
+          }}
+        />
+      </div>
     </>
   );
 }

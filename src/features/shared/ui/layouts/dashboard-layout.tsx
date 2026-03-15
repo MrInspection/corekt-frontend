@@ -75,8 +75,8 @@ function DashboardLayout({ children, className }: DashboardProps) {
 }
 
 export {
-  DashboardLayout,
   DashboardActionBar,
-  DashboardHeader,
   DashboardContent,
+  DashboardHeader,
+  DashboardLayout,
 };

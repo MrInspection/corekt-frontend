@@ -9,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { ProjectCard } from "@/features/projects/components/project-card";
 import { ProjectEmptyState } from "@/features/projects/components/states/project-empty-state";
 import { ProjectsLoadingState } from "@/features/projects/components/states/projects-loading-state";
@@ -28,7 +29,8 @@ import {
 
 export function ProjectsDashboardView() {
   const dialogManager = useDialogManager();
-  const { getProjects } = useProjects();
+  const { userId } = useAuth();
+  const { getProjects } = useProjects(userId);
   const projects = getProjects.data ?? [];
 
   const {

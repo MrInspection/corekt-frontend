@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import {
   createProjectAction,
   deleteProjectAction,
@@ -15,9 +14,8 @@ export const projectsQueryKey = (userId: string) =>
 export const projectQueryKey = (userId: string, projectId: string) =>
   ["projects", userId, projectId] as const;
 
-export function useProjects() {
+export function useProjects(userId?: string) {
   const queryClient = useQueryClient();
-  const { userId } = useAuth();
 
   const getProjects = useQuery({
     queryKey: projectsQueryKey(userId ?? ""),
@@ -25,6 +23,7 @@ export function useProjects() {
       return await getProjectsAction().then((res) => res.data);
     },
     enabled: !!userId,
+    placeholderData: (previousData) => previousData,
   });
 
   const createProjectMutation = useToastMutation({
@@ -35,29 +34,33 @@ export function useProjects() {
     successMessage: "Project created successfully!",
     errorMessage: "Unable to create project.",
     options: {
-      onSuccess: () => {
+      onSettled: () => {
         if (!userId) return;
-        queryClient.invalidateQueries({ queryKey: projectsQueryKey(userId) });
+        queryClient.invalidateQueries({
+          queryKey: projectsQueryKey(userId),
+          exact: true,
+        });
       },
     },
   });
 
   const updateProjectMutation = useToastMutation({
     mutationFn: async (payload: ProjectForm & { id: string }) => {
-      console.log("updateProjectAction payload", payload);
-      const res = await updateProjectAction(payload);
-      console.log("updateProjectAction res", res);
-      return res?.data;
+      return await updateProjectAction(payload).then((res) => res?.data);
     },
     loadingMessage: "Updating project...",
     successMessage: "Project updated successfully!",
     errorMessage: "Unable to update project.",
     options: {
-      onSuccess: (_, { id: projectId }) => {
+      onSettled: (_data, _error, { id: projectId }) => {
         if (!userId) return;
-        queryClient.invalidateQueries({ queryKey: projectsQueryKey(userId) });
         queryClient.invalidateQueries({
           queryKey: projectQueryKey(userId, projectId),
+          exact: true,
+        });
+        queryClient.invalidateQueries({
+          queryKey: projectsQueryKey(userId),
+          exact: true,
         });
       },
     },
@@ -71,9 +74,15 @@ export function useProjects() {
     successMessage: "Project deleted successfully!",
     errorMessage: "Unable to delete project.",
     options: {
-      onSuccess: () => {
+      onSettled: (_data, _error, projectId) => {
         if (!userId) return;
-        queryClient.invalidateQueries({ queryKey: projectsQueryKey(userId) });
+        queryClient.removeQueries({
+          queryKey: projectQueryKey(userId, projectId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: projectsQueryKey(userId),
+          exact: true,
+        });
       },
     },
   });
@@ -86,14 +95,12 @@ export function useProjects() {
   };
 }
 
-export function useProject(projectId: string) {
-  const { userId } = useAuth();
-
+export function useProject(projectId: string, userId?: string) {
   return useQuery({
     queryKey: projectQueryKey(userId ?? "", projectId),
     queryFn: async () => {
       return await getProjectAction({ id: projectId }).then((res) => res?.data);
     },
-    enabled: !!userId,
+    enabled: !!userId && !!projectId,
   });
 }

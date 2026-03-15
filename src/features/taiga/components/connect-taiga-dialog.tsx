@@ -2,6 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { CircleCheck } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +29,7 @@ type ConnectTaigaDialogProps = {
 
 export function ConnectTaigaDialog({ onConnected }: ConnectTaigaDialogProps) {
   const { loginMutation } = useTaiga();
+  const [open, setOpen] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -39,13 +41,16 @@ export function ConnectTaigaDialog({ onConnected }: ConnectTaigaDialogProps) {
     },
     onSubmit: async ({ value }) => {
       loginMutation.mutate(value, {
-        onSuccess: (projects) => onConnected(projects ?? []),
+        onSuccess: (projects) => {
+          setOpen(false);
+          onConnected(projects ?? []);
+        },
       });
     },
   });
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button>Connect account</Button>} />
       <DialogContent className="w-96 gap-0 p-0">
         <DialogHeader className="gap-0 px-6 pt-10">

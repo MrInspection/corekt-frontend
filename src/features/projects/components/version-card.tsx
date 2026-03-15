@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import {
   Calendar,
@@ -25,10 +26,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
+import { getVersionAction } from "@/features/projects/actions/versions.action";
 import { EditVersionDialog } from "@/features/projects/components/dialogs/edit-version-dialog";
-import { useVersions } from "@/features/projects/hooks/use-versions.hook";
+import {
+  useVersions,
+  versionQueryKey,
+} from "@/features/projects/hooks/use-versions.hook";
 import type { Version } from "@/features/projects/validation/versions.schema";
-import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 
 type ProjectStatus = Version["status"];
 
@@ -71,12 +76,26 @@ export function VersionCard(props: Version & { projectId: string }) {
 
   const { deleteVersionMutation } = useVersions({ projectId: props.projectId });
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const handleMouseEnter = () => {
+    queryClient.prefetchQuery({
+      queryKey: versionQueryKey(props.projectId, props.id),
+      queryFn: () =>
+        getVersionAction({
+          projectId: props.projectId,
+          versionId: props.id,
+        }).then((res) => res?.data),
+      staleTime: 30_000,
+    });
+  };
 
   return (
     <div
       className="max-h-fit cursor-pointer rounded-xl border bg-card shadow-xs transition-transform duration-150 hover:-translate-y-0.5 hover:border-gray-300 hover:border-b-4 hover:shadow-md"
       role="button"
       tabIndex={0}
+      onMouseEnter={handleMouseEnter}
       onClick={() => {
         if (props.status === "COMPLETED") {
           router.push(

@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import {
   Calendar,
@@ -18,21 +19,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
+import { getVersionsAction } from "@/features/projects/actions/versions.action";
 import { EditProjectDialog } from "@/features/projects/components/dialogs/edit-project-dialog";
 import { useProjects } from "@/features/projects/hooks/use-projects.hook";
+import { versionsQueryKey } from "@/features/projects/hooks/use-versions.hook";
 import type { Project } from "@/features/projects/validation/projects.schema";
-import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 
 export function ProjectCard(props: Project) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const { deleteProjectMutation } = useProjects();
+  const { userId } = useAuth();
+  const { deleteProjectMutation } = useProjects(userId);
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const handleMouseEnter = () => {
+    queryClient.prefetchQuery({
+      queryKey: versionsQueryKey(props.id),
+      queryFn: () =>
+        getVersionsAction({ projectId: props.id }).then((res) => res?.data),
+      staleTime: 30_000,
+    });
+  };
 
   return (
     <div
       className="max-h-fit cursor-pointer rounded-xl border bg-card shadow-xs transition-transform duration-150 hover:-translate-y-0.5 hover:border-gray-300 hover:border-b-4 hover:shadow-md"
       onClick={() => router.push(`/projects/${props.id}`)}
+      onMouseEnter={handleMouseEnter}
       role="button"
       tabIndex={0}
     >
