@@ -25,6 +25,7 @@ export function useVersions({ projectId }: { projectId?: string } = {}) {
         (res) => res?.data,
       ),
     enabled: !!projectId,
+    placeholderData: (previousData) => previousData,
   });
 
   const createVersionMutation = useToastMutation({
@@ -34,17 +35,18 @@ export function useVersions({ projectId }: { projectId?: string } = {}) {
         (res) => res?.data,
       );
     },
-    options: {
-      onSuccess: () => {
-        if (!projectId) return;
-        queryClient.invalidateQueries({
-          queryKey: versionsQueryKey(projectId),
-        });
-      },
-    },
     loadingMessage: "Creating version...",
     successMessage: "Version created successfully!",
     errorMessage: "Unable to create version.",
+    options: {
+      onSettled: () => {
+        if (!projectId) return;
+        queryClient.invalidateQueries({
+          queryKey: versionsQueryKey(projectId),
+          exact: true,
+        });
+      },
+    },
   });
 
   const updateVersionMutation = useToastMutation({
@@ -54,20 +56,22 @@ export function useVersions({ projectId }: { projectId?: string } = {}) {
         (res) => res?.data,
       );
     },
-    options: {
-      onSuccess: (_, { versionId }) => {
-        if (!projectId) return;
-        queryClient.invalidateQueries({
-          queryKey: versionsQueryKey(projectId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: versionQueryKey(projectId, versionId),
-        });
-      },
-    },
     loadingMessage: "Updating version...",
     successMessage: "Version updated successfully!",
     errorMessage: "Unable to update version.",
+    options: {
+      onSettled: (_data, _error, { versionId }) => {
+        if (!projectId) return;
+        queryClient.invalidateQueries({
+          queryKey: versionQueryKey(projectId, versionId),
+          exact: true,
+        });
+        queryClient.invalidateQueries({
+          queryKey: versionsQueryKey(projectId),
+          exact: true,
+        });
+      },
+    },
   });
 
   const deleteVersionMutation = useToastMutation({
@@ -77,20 +81,21 @@ export function useVersions({ projectId }: { projectId?: string } = {}) {
         (res) => res?.data,
       );
     },
-    options: {
-      onSuccess: (_, versionId) => {
-        if (!projectId) return;
-        queryClient.invalidateQueries({
-          queryKey: versionsQueryKey(projectId),
-        });
-        queryClient.removeQueries({
-          queryKey: versionQueryKey(projectId, versionId),
-        });
-      },
-    },
     loadingMessage: "Deleting version...",
     successMessage: "Version deleted successfully!",
     errorMessage: "Unable to delete version.",
+    options: {
+      onSettled: (_data, _error, versionId) => {
+        if (!projectId) return;
+        queryClient.removeQueries({
+          queryKey: versionQueryKey(projectId, versionId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: versionsQueryKey(projectId),
+          exact: true,
+        });
+      },
+    },
   });
 
   return {
@@ -112,5 +117,6 @@ export function useVersion({
     queryKey: versionQueryKey(projectId, versionId),
     queryFn: async () =>
       await getVersionAction({ projectId, versionId }).then((res) => res?.data),
+    enabled: !!projectId && !!versionId,
   });
 }

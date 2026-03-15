@@ -13,6 +13,7 @@ import {
 import { FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { useProjects } from "@/features/projects/hooks/use-projects.hook";
 import { ProjectFormSchema } from "@/features/projects/validation/projects.schema";
 import { FormField } from "@/features/shared/form/form-field";
@@ -24,7 +25,8 @@ export function CreateProjectDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { createProjectMutation } = useProjects();
+  const { userId } = useAuth();
+  const { createProjectMutation } = useProjects(userId);
 
   const form = useForm({
     defaultValues: {

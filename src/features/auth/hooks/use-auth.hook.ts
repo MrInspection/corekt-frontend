@@ -17,8 +17,12 @@ export function useAuth() {
   const { data: currentUser } = useQuery({
     queryKey: ["user", "me"],
     queryFn: async () => {
-      return await getCurrentUserAction().then((res) => res.data);
+      const result = await getCurrentUserAction();
+      if (!result.data) return null;
+      return result.data;
     },
+    retry: false,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 
   const loginMutation = useToastMutation({

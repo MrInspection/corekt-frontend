@@ -13,6 +13,7 @@ import {
 import { FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { useProjects } from "@/features/projects/hooks/use-projects.hook";
 import {
   type Project,
@@ -31,7 +32,8 @@ export function EditProjectDialog({
   onOpenChange,
   project,
 }: EditProjectDialogProps) {
-  const { updateProjectMutation } = useProjects();
+  const { userId } = useAuth();
+  const { updateProjectMutation } = useProjects(userId);
 
   const form = useForm({
     defaultValues: {
