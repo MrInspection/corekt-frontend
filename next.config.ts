@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
   },
+  redirects: async () => [
+    {
+      source: "/legal",
+      destination: "/legal/terms-and-conditions",
+      permanent: true,
+    },
+  ],
 };
 
 export default nextConfig;
