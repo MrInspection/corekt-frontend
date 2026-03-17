@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { DialogManagerRenderer } from "@/features/shared/dialog-manager/dialog-manager-renderer";
-import { DashboardLayout } from "@/features/shared/ui/layouts/dashboard-layout";
-import { DashboardSidebar } from "@/features/shared/ui/layouts/dashboard-sidebar";
+import { DashboardSidebar } from "@/features/shared/navigation/dashboard/dashboard-sidebar";
+import { DashboardLayout } from "@/features/shared/ui/dashboard-layout";
 
 export default function ApplicationLayout({
   children,
@@ -9,7 +9,7 @@ export default function ApplicationLayout({
   children: ReactNode;
 }) {
   return (
-    <main className="flex h-screen flex-col bg-gray-50">
+    <main className="flex h-screen flex-col bg-gray-100">
       <div className="flex flex-1 overflow-hidden">
         <DashboardSidebar />
         <DashboardLayout>

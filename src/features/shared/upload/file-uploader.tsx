@@ -53,7 +53,7 @@ export default function FileUpload({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div
-        className="flex h-72 select-none flex-col items-center justify-center rounded-4xl border border-neutral-300 border-dashed p-8 transition-colors has-disabled:pointer-events-none has-disabled:opacity-60 data-[dragging=true]:bg-accent/80"
+        className="flex h-72 select-none flex-col items-center justify-center rounded-4xl border border-neutral-300 border-dashed bg-background p-8 transition-colors has-disabled:pointer-events-none has-disabled:opacity-60 data-[dragging=true]:bg-accent/80"
         data-dragging={isDragging || undefined}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}

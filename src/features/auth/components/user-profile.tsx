@@ -1,6 +1,7 @@
 "use client";
 
 import { Keyboard, LogOut, Settings, Trophy } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -14,57 +15,60 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserProfileCard } from "@/features/auth/components/user-profile-card";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { KeyboardShortcutsSheet } from "@/features/shared/ui/keyboard-shortcuts-sheet";
 
-export function UserProfile() {
+export function UserProfile({ fullVersion }: { fullVersion?: boolean }) {
+  const [openShortcutsSheet, setOpenShortcutsSheet] = useState(false);
+
   const { logoutMutation, currentUser } = useAuth();
   useHotkeys("l>o", () => setOpenConfirmationDialog(true));
   const [openConfirmationDialog, setOpenConfirmationDialog] =
     useState<boolean>(false);
 
+  useHotkeys("mod+h", (e) => {
+    e.preventDefault();
+    setOpenShortcutsSheet(() => !openShortcutsSheet);
+  });
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex focus:rounded-full">
-          <Avatar className="size-8">
-            <AvatarFallback className="size-8 bg-background">
-              {currentUser?.username.charAt(0) ?? "U"}
-            </AvatarFallback>
-          </Avatar>
+          {fullVersion ? (
+            <UserProfileCard />
+          ) : (
+            <Avatar className="size-8">
+              <AvatarFallback className="size-8 bg-background">
+                {currentUser?.username.charAt(0) ?? "U"}
+              </AvatarFallback>
+            </Avatar>
+          )}
         </DropdownMenuTrigger>
         <DropdownMenuContent className="mb-1 w-(base-dropdown-menu-trigger-width) w-56 rounded-xl">
           <DropdownMenuGroup>
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="size-8">
-                  <AvatarFallback className="size-8 bg-background">
-                    {currentUser?.username.charAt(0) ?? "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium text-foreground">
-                    {currentUser?.username ?? "Unknown User"}
-                  </span>
-                  <span className="truncate text-xs">
-                    {currentUser?.email ?? "Unknown email"}
-                  </span>
-                </div>
-              </div>
+              <UserProfileCard />
             </DropdownMenuLabel>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="p-1">
-            <DropdownMenuItem>
-              <Trophy className="size-4" /> Achievements
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="size-4" /> Preferences
-            </DropdownMenuItem>
+            <Link href="/preferences/achievements">
+              <DropdownMenuItem>
+                <Trophy className="size-4" /> Achievements
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/preferences">
+              <DropdownMenuItem>
+                <Settings className="size-4" /> Preferences
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="p-1">
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenShortcutsSheet(true)}>
               <Keyboard className="size-4" /> Keyboard Shortcuts
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -93,6 +97,13 @@ export function UserProfile() {
           onOpenChange={setOpenConfirmationDialog}
           onConfirm={() => logoutMutation.mutate()}
           isLoading={logoutMutation.isPending}
+        />
+      </div>
+
+      <div role="dialog">
+        <KeyboardShortcutsSheet
+          open={openShortcutsSheet}
+          onOpenChange={setOpenShortcutsSheet}
         />
       </div>
     </>

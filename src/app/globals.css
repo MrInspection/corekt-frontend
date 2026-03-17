@@ -302,6 +302,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .html {
+    scroll-behavior: smooth;
+  }
   .container {
     @apply max-w-7xl mx-auto px-4;
   }

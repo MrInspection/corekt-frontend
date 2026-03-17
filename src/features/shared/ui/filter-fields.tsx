@@ -107,7 +107,7 @@ export const ISSUE_FILTER_FIELDS: FilterField[] = [
     id: "severity",
     label: "Severity",
     type: "enum",
-    icon: <TagIcon className="size-3.5" />,
+    icon: <CircleDot className="size-3.5" />,
     options: [
       {
         value: "minor",

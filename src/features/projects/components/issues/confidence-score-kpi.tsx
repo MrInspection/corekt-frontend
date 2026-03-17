@@ -54,8 +54,8 @@ export function ConfidenceScoreKpi({ score }: ConfidenceScoreKpiProps) {
           </TooltipTrigger>
           <TooltipContent className="w-52">
             <p>
-              Confidence score is determined with the coherence between the
-              provided deliverables.
+              A score is determined with the coherence between the provided
+              deliverables.
             </p>
           </TooltipContent>
         </Tooltip>

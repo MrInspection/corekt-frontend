@@ -107,7 +107,7 @@ export function EditProjectDialog({
             Cancel
           </DialogClose>
           <Button type="submit" form={`edit-project-form-${project.id}`}>
-            Save Changes
+            Save changes
           </Button>
         </DialogFooter>
       </DialogContent>

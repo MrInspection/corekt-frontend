@@ -36,3 +36,9 @@ export const saveApiKeyAction = authAction
       body: payload,
     });
   });
+
+export const deleteAccountAction = authAction.action(async ({ ctx: user }) => {
+  return await upfetchServer(`/user/${user.id}`, {
+    method: "DELETE",
+  });
+});

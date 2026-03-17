@@ -5,12 +5,19 @@ import { useParams, usePathname } from "next/navigation";
 import React from "react";
 import {
   Breadcrumb,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { projectQueryKey } from "@/features/projects/hooks/use-projects.hook";
 import { versionQueryKey } from "@/features/projects/hooks/use-versions.hook";
 
@@ -21,6 +28,14 @@ type DynamicBreadcrumbProps = {
   hrefOverrides?: SegmentOverrides;
   skippedSegments?: string[];
   nonNavigableSegments?: string[];
+  mobileMaxVisible?: number; // how many items to show on mobile before collapsing
+};
+
+type BreadcrumbEntry = {
+  label: string;
+  href: string;
+  isLast: boolean;
+  isNavigable: boolean;
 };
 
 const defaultLabelOverrides: SegmentOverrides = {
@@ -35,24 +50,43 @@ function resolveSegmentLabel(
   return `${segment.charAt(0).toUpperCase()}${segment.slice(1)}`;
 }
 
+function CollapsedBreadcrumbs({ items }: { items: BreadcrumbEntry[] }) {
+  return (
+    <BreadcrumbItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex items-center gap-1">
+          <BreadcrumbEllipsis className="size-4" />
+          <span className="sr-only">Toggle menu</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          {items.map(({ label, href, isNavigable }) => (
+            <DropdownMenuItem key={href}>
+              {isNavigable ? <a href={href}>{label}</a> : <span>{label}</span>}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </BreadcrumbItem>
+  );
+}
+
 export function DynamicBreadcrumb({
   labelOverrides = {},
   hrefOverrides = {},
   skippedSegments = [],
   nonNavigableSegments = [],
+  mobileMaxVisible = 2,
 }: DynamicBreadcrumbProps) {
   const pathname = usePathname();
   const params = useParams();
   const queryClient = useQueryClient();
 
-  // Extract dynamic IDs from params
   const projectId =
     typeof params.projectId === "string" ? params.projectId : undefined;
   const versionId =
     typeof params.version === "string" ? params.version : undefined;
   const userId = queryClient.getQueryData<{ id: string }>(["user", "me"])?.id;
 
-  // Get cached project and version data
   const cachedProject =
     projectId && userId
       ? queryClient.getQueryData<{ title: string }>(
@@ -66,7 +100,6 @@ export function DynamicBreadcrumb({
         )
       : undefined;
 
-  // Build smart label overrides using cached data
   const smartLabelOverrides: SegmentOverrides = { ...labelOverrides };
   if (cachedProject?.title && projectId) {
     smartLabelOverrides[projectId] = cachedProject.title;
@@ -88,7 +121,6 @@ export function DynamicBreadcrumb({
     ),
   );
 
-  // Maps param value -> param key e.g. { tinywallets: "projectId", "1": "versionId" }
   const paramKeyByValue = Object.fromEntries(
     Object.entries(params).flatMap(([key, value]) =>
       Array.isArray(value) ? value.map((v) => [v, key]) : [[value, key]],
@@ -97,7 +129,7 @@ export function DynamicBreadcrumb({
 
   const segments = pathname.split("/").filter(Boolean);
 
-  const breadcrumbs = segments
+  const breadcrumbs: BreadcrumbEntry[] = segments
     .map((segment, originalIndex) => ({ segment, originalIndex }))
     .filter(({ segment }) => !skippedSet.has(segment))
     .map(({ segment, originalIndex }, index, filtered) => {
@@ -129,21 +161,78 @@ export function DynamicBreadcrumb({
       };
     });
 
+  // On mobile: show first item + ellipsis (collapsed middle) + last item
+  // On desktop: show all items
+  const shouldCollapse = breadcrumbs.length > mobileMaxVisible;
+  const collapsedItems = shouldCollapse
+    ? breadcrumbs.slice(1, breadcrumbs.length - 1)
+    : [];
+
+  function renderBreadcrumbItem(
+    entry: BreadcrumbEntry,
+    index: number,
+    _items: BreadcrumbEntry[],
+  ) {
+    const { label, href, isLast, isNavigable } = entry;
+
+    return (
+      <React.Fragment key={href}>
+        {index > 0 && <BreadcrumbSeparator />}
+        <BreadcrumbItem>
+          {isLast || !isNavigable ? (
+            <BreadcrumbPage>{label}</BreadcrumbPage>
+          ) : (
+            <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
+          )}
+        </BreadcrumbItem>
+      </React.Fragment>
+    );
+  }
+
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {breadcrumbs.map(({ label, href, isLast, isNavigable }, index) => (
-          <React.Fragment key={href}>
-            {index > 0 && <BreadcrumbSeparator />}
+        {!shouldCollapse &&
+          breadcrumbs.map((entry, index) =>
+            renderBreadcrumbItem(entry, index, breadcrumbs),
+          )}
+        {shouldCollapse && (
+          <>
+            {renderBreadcrumbItem(breadcrumbs[0], 0, breadcrumbs)}
+            {collapsedItems.length > 0 && (
+              <>
+                <BreadcrumbSeparator className="md:hidden" />
+                <span className="md:hidden">
+                  <CollapsedBreadcrumbs items={collapsedItems} />
+                </span>
+
+                {/* Desktop: render normally */}
+                {collapsedItems.map((entry) => (
+                  <span key={entry.href} className="hidden md:contents">
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      {entry.isNavigable ? (
+                        <BreadcrumbLink href={entry.href}>
+                          {entry.label}
+                        </BreadcrumbLink>
+                      ) : (
+                        <BreadcrumbPage>{entry.label}</BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
+                  </span>
+                ))}
+              </>
+            )}
+
+            {/* Last item — always visible */}
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
-              {isLast || !isNavigable ? (
-                <BreadcrumbPage>{label}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
-              )}
+              <BreadcrumbPage>
+                {breadcrumbs[breadcrumbs.length - 1].label}
+              </BreadcrumbPage>
             </BreadcrumbItem>
-          </React.Fragment>
-        ))}
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );

@@ -25,7 +25,7 @@ import { EditProjectDialog } from "@/features/projects/components/dialogs/edit-p
 import { useProjects } from "@/features/projects/hooks/use-projects.hook";
 import { versionsQueryKey } from "@/features/projects/hooks/use-versions.hook";
 import type { Project } from "@/features/projects/validation/projects.schema";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 
 export function ProjectCard(props: Project) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

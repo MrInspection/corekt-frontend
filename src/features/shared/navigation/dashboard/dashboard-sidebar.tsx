@@ -14,7 +14,7 @@ import { Icons } from "@/features/shared/ui/icons";
 
 export function DashboardSidebar() {
   return (
-    <div className="flex h-full w-14 flex-col items-center justify-center space-y-4 px-2 py-4">
+    <div className="flex h-full w-14 flex-col items-center justify-center space-y-4 px-2 py-4 max-md:hidden">
       <header>
         <Link href="/">
           <Icons.corekt className="size-6" />

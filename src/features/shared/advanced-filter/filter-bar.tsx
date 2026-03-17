@@ -216,7 +216,7 @@ function AddFilterButton({ fields, onSelect }: AddFilterButtonProps) {
             />
           }
         />
-        <TooltipContent side="bottom">
+        <TooltipContent side="bottom" align="start">
           <span className="mr-1.5">Add filter</span>
           <Kbd>F</Kbd>
         </TooltipContent>

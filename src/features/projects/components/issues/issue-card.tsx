@@ -1,18 +1,18 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
 import {
-  AlertTriangleIcon,
+  Check,
   ChevronRight,
   CircleAlertIcon,
   CircleDot,
+  FlagTriangleRight,
+  type LucideIcon,
   OctagonX,
   SquareCheck,
   XIcon,
-  Zap,
-  ZapIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -30,28 +30,24 @@ export type IssueSeverity = "critical" | "major" | "minor";
 type SeverityConfig = {
   label: string;
   icon: LucideIcon;
-  cardClass: string;
-  badgeClass: string;
+  labelColor: string;
 };
 
 const severityConfig: Record<IssueSeverity, SeverityConfig> = {
   critical: {
     label: "Critical",
     icon: OctagonX,
-    cardClass: "text-error-500",
-    badgeClass: "bg-error-100 text-error-500",
+    labelColor: "text-error-500",
   },
   major: {
     label: "Major",
     icon: CircleAlertIcon,
-    cardClass: "text-warning-500",
-    badgeClass: "bg-warning-100/80 text-warning-500",
+    labelColor: "text-warning-500",
   },
   minor: {
     label: "Minor",
     icon: CircleDot,
-    cardClass: "text-gray-500",
-    badgeClass: "bg-gray-100 text-gray-500",
+    labelColor: "text-gray-500",
   },
 };
 
@@ -61,16 +57,15 @@ type IssueCardProps = {
   description: string;
   severity: IssueSeverity;
   isResolved: boolean;
-  xp: number;
   confidenceScore: number;
   content: string;
 };
 
 function IssueCardSeverity({ severity }: { severity: IssueSeverity }) {
-  const { label, icon: Icon, cardClass } = severityConfig[severity];
+  const { label, icon: Icon, labelColor } = severityConfig[severity];
 
   return (
-    <div className={`flex items-center gap-1.5 text-sm ${cardClass}`}>
+    <div className={`flex items-center gap-1.5 text-sm ${labelColor}`}>
       <Icon className="size-4" />
       <span className="font-medium">{label} Severity</span>
     </div>
@@ -83,12 +78,11 @@ export function IssueCard({
   description,
   severity,
   isResolved,
-  xp,
   confidenceScore,
   content,
 }: IssueCardProps) {
   const [openSheet, setOpenSheet] = useState(false);
-  const { label: severityLabel, badgeClass } = severityConfig[severity];
+  const { label: severityLabel } = severityConfig[severity];
 
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet} modal={true}>
@@ -103,12 +97,15 @@ export function IssueCard({
           <div className="flex items-center justify-between rounded-b-2xl border-t bg-gray-25 px-6 py-4">
             <div className="flex items-center gap-3">
               <IssueCardSeverity severity={severity} />
-              <div className="flex items-center gap-1.5 text-sm">
-                <Zap className="size-4 fill-brand-200 stroke-brand-600" />
-                <span className="font-medium">{xp} XP</span>
+              <div
+                className="flex items-center gap-1.5 text-sm text-success-600"
+                hidden={!isResolved}
+              >
+                <Check className="size-4" />
+                <span className="font-medium">Resolved</span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+            <div className="flex items-center gap-1.5 text-muted-foreground text-sm max-hidden:hidden">
               <span className="font-medium">Click to view</span>
               <ChevronRight className="size-4" />
             </div>
@@ -116,7 +113,7 @@ export function IssueCard({
         </section>
       </SheetTrigger>
       <SheetContent
-        className="mt-4 mr-4 flex min-w-116 flex-1 flex-col gap-0 divide-y overflow-hidden rounded-2xl md:max-h-[97vh]"
+        className="flex min-w-full flex-1 flex-col gap-0 divide-y overflow-hidden md:mt-4 md:mr-4 md:max-h-[97vh] md:min-w-116 md:rounded-2xl"
         showCloseButton={false}
       >
         <SheetHeader className="p-6">
@@ -132,11 +129,9 @@ export function IssueCard({
                 <CircleDot className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
                 <span>Severity</span>
               </div>
-              <p
-                className={`w-fit rounded-md px-2 font-medium text-sm ${badgeClass}`}
-              >
+              <Badge variant="outline" className="rounded">
                 {severityLabel}
-              </p>
+              </Badge>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="inline-flex items-center gap-2">
@@ -147,13 +142,19 @@ export function IssueCard({
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="inline-flex items-center gap-2">
-                <ZapIcon className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
-                <span>Completion Reward</span>
+                <FlagTriangleRight className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
+                <span>Status</span>
               </div>
-              <p className="font-semibold">{xp} XP</p>
+              <p className="font-semibold">
+                {isResolved ? "Resolved" : "Not Resolved"}
+              </p>
             </div>
-            <Button variant="outline" className="mt-3 w-full">
-              Mark as falsely detection & resolve
+            <Button
+              variant="outline"
+              className="mt-4 w-full"
+              disabled={isResolved}
+            >
+              Mark as false detection
             </Button>
           </div>
         </SheetHeader>
@@ -161,7 +162,7 @@ export function IssueCard({
           <MarkdownRenderer content={content} />
         </div>
         <SheetFooter>
-          <Button>Mark as resolved</Button>
+          <Button disabled={isResolved}>Mark as resolved</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

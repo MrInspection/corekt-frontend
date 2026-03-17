@@ -38,14 +38,15 @@ import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
+import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
-import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import {
   DashboardActionBar,
   DashboardContent,
   DashboardHeader,
-} from "@/features/shared/ui/layouts/dashboard-layout";
+} from "@/features/shared/ui/dashboard-layout";
+import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 
 export function ProjectVersionsView({ projectId }: { projectId: string }) {
   const dialogManager = useDialogManager();
@@ -84,18 +85,19 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
           <div className="inline-flex shrink-0 items-center gap-2">
-            <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
+            <div className="inline-flex shrink-0 items-center gap-2">
+              <DashboardSidebarSheet />
+              <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={
-                  <Button size="icon-sm" variant="ghost" className="h-7" />
-                }
+                render={<Button size="icon-xs" variant="ghost" />}
               >
-                <MoreHorizontalIcon className="size-4" />
+                <MoreHorizontalIcon className="size-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setOpenEditDialog(true)}>
-                  <Pencil className="size-4" /> Rename
+                  <Pencil className="size-4" /> Rename...
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
                   <Trash className="size-4" /> Delete
@@ -103,12 +105,13 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center md:gap-1.5">
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <Button size="icon-xs" variant="ghost">
-                    <GitCompare className="size-3.5" />
+                  <Button size="xs" variant="ghost">
+                    <GitCompare className="size-3.5" />{" "}
+                    <span className="max-md:hidden">Compare</span>
                   </Button>
                 }
               />
@@ -118,7 +121,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
                 <Kbd>V</Kbd>
               </TooltipContent>
             </Tooltip>
-            <div className="h-5 w-px bg-border" />
+            <div className="h-5 w-px bg-border max-md:hidden" />
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -127,7 +130,8 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
                     variant="ghost"
                     onClick={openCreateVersionDialog}
                   >
-                    <PlusIcon className="size-3.5" /> New Version
+                    <PlusIcon className="size-3.5" />{" "}
+                    <span className="max-md:hidden">New Version</span>
                   </Button>
                 }
               />

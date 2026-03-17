@@ -19,13 +19,14 @@ import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
+import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { PROJECT_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
   DashboardContent,
   DashboardHeader,
-} from "@/features/shared/ui/layouts/dashboard-layout";
+} from "@/features/shared/ui/dashboard-layout";
+import { PROJECT_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 
 export function ProjectsDashboardView() {
   const dialogManager = useDialogManager();
@@ -53,7 +54,10 @@ export function ProjectsDashboardView() {
     <>
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
-          <DynamicBreadcrumb />
+          <div className="inline-flex shrink-0 items-center gap-2">
+            <DashboardSidebarSheet />
+            <DynamicBreadcrumb />
+          </div>
           <Tooltip>
             <TooltipTrigger
               render={
@@ -70,7 +74,7 @@ export function ProjectsDashboardView() {
           </Tooltip>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-50">
+      <DashboardActionBar className="bg-gray-25">
         <FilterBar
           fields={PROJECT_FILTER_FIELDS}
           filters={filters}
