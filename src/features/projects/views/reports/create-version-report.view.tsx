@@ -13,12 +13,13 @@ import { UploadInterviewStep } from "@/features/projects/components/stepper/uplo
 import { useDirtyNavigationBlocker } from "@/features/projects/hooks/use-navigation-blocker.hook";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
 import { useVersion } from "@/features/projects/hooks/use-versions.hook";
+import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import {
   DashboardContent,
   DashboardHeader,
-} from "@/features/shared/ui/layouts/dashboard-layout";
+} from "@/features/shared/ui/dashboard-layout";
+import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import { StepIndicator } from "@/features/shared/ui/step-indicator";
 
 const TOTAL_STEPS = 4;
@@ -50,11 +51,14 @@ export function CreateVersionReportView() {
   return (
     <>
       <DashboardHeader className="flex items-center justify-between">
-        <DynamicBreadcrumb
-          hrefOverrides={{ projects: "/dashboard" }}
-          labelOverrides={{ version: `v${version?.version}` }}
-          skippedSegments={["version"]}
-        />
+        <div className="inline-flex shrink-0 items-center gap-2">
+          <DashboardSidebarSheet />
+          <DynamicBreadcrumb
+            hrefOverrides={{ projects: "/dashboard" }}
+            labelOverrides={{ version: `v${version?.version}` }}
+            skippedSegments={["version"]}
+          />
+        </div>
         <Button
           size="xs"
           variant="ghost"

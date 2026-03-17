@@ -29,7 +29,7 @@ export function FilterEmptyState({
           onClick={onClearFilters}
           className="space-x-1.5"
         >
-          <span>Clear Filters</span>{" "}
+          <span>Clear all filters</span>{" "}
           <KbdGroup>
             <Kbd>Ctrl</Kbd>
             <Kbd>⇧</Kbd>

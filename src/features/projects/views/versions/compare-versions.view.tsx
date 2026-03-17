@@ -1,43 +1,28 @@
+"use client";
+
 import { ChevronDownIcon, GitBranch, GitCompare } from "lucide-react";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
+import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import {
   DashboardActionBar,
   DashboardContent,
   DashboardHeader,
-} from "@/features/shared/ui/layouts/dashboard-layout";
+} from "@/features/shared/ui/dashboard-layout";
 
 export function CompareVersionsView() {
   return (
     <>
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">Projects</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#">TinyWallets</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Compare</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <div className="inline-flex shrink-0 items-center gap-2">
+            <DashboardSidebarSheet />
+            <DynamicBreadcrumb hrefOverrides={{ projects: "/dashboard" }} />
+          </div>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-50">
+      <DashboardActionBar className="bg-gray-25">
         <div className="flex items-center gap-1.5">
           <ButtonGroup>
             <Button variant="outline" size="xs">

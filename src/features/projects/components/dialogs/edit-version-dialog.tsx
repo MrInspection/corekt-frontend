@@ -87,7 +87,7 @@ export function EditVersionDialog({
             Cancel
           </DialogClose>
           <Button type="submit" form={`edit-version-form-${version.id}`}>
-            Save Changes
+            Save changes
           </Button>
         </DialogFooter>
       </DialogContent>

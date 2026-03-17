@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import {
@@ -8,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { dummyIssues } from "@/features/mock-data";
 import { ConfidenceScoreKpi } from "@/features/projects/components/issues/confidence-score-kpi";
 import {
@@ -16,19 +18,32 @@ import {
 } from "@/features/projects/components/issues/issue-card";
 import { TotalIssuesKpi } from "@/features/projects/components/issues/total-issues-kpi";
 import { NoIssuesState } from "@/features/projects/components/states/no-issues-state";
+import { useProject } from "@/features/projects/hooks/use-projects.hook";
+import { useVersion } from "@/features/projects/hooks/use-versions.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
 import { useFilterState } from "@/features/shared/advanced-filter/use-filter-state.hook";
+import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
-import { ISSUE_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 import {
   DashboardActionBar,
   DashboardContent,
   DashboardHeader,
-} from "@/features/shared/ui/layouts/dashboard-layout";
+} from "@/features/shared/ui/dashboard-layout";
+import { ISSUE_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 
 export function ProjectReportView() {
+  const params = useParams<{ projectId: string; version: string }>();
+
+  const { userId } = useAuth();
+  useProject(params.projectId, userId);
+
+  const { data: version } = useVersion({
+    projectId: params.projectId,
+    versionId: params.version,
+  });
+
   const {
     filters,
     addFilter,
@@ -46,13 +61,17 @@ export function ProjectReportView() {
     <>
       <DashboardHeader>
         <div className="flex w-full items-center justify-between gap-2">
-          <DynamicBreadcrumb
-            hrefOverrides={{ projects: "/dashboard" }}
-            skippedSegments={["version"]}
-          />
+          <div className="inline-flex shrink-0 items-center gap-2">
+            <DashboardSidebarSheet />
+            <DynamicBreadcrumb
+              hrefOverrides={{ projects: "/dashboard" }}
+              labelOverrides={{ version: `v${version?.version}` }}
+              skippedSegments={["version"]}
+            />
+          </div>
           <Tooltip>
             <TooltipTrigger render={<Button size="xs" variant="ghost" />}>
-              <Download /> Export
+              <Download className="size-3.5" /> Export
             </TooltipTrigger>
             <TooltipContent side="bottom" align="end">
               <span className="mr-1.5">Export your report</span>
@@ -62,7 +81,7 @@ export function ProjectReportView() {
           </Tooltip>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-50">
+      <DashboardActionBar className="bg-gray-25">
         <FilterBar
           fields={ISSUE_FILTER_FIELDS}
           filters={filters}
