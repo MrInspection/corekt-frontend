@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function TermsAndConditionsPage() {
-  return <div>Route content</div>;
+  return <div className="flex flex-1 flex-col">Route content</div>;
 }
