@@ -174,7 +174,6 @@ export function DynamicBreadcrumb({
     _items: BreadcrumbEntry[],
   ) {
     const { label, href, isLast, isNavigable } = entry;
-    const _isFirst = index === 0;
 
     return (
       <React.Fragment key={href}>
@@ -208,7 +207,7 @@ export function DynamicBreadcrumb({
                 </span>
 
                 {/* Desktop: render normally */}
-                {collapsedItems.map((entry, index) => (
+                {collapsedItems.map((entry) => (
                   <span key={entry.href} className="hidden md:contents">
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
