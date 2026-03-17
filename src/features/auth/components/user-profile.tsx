@@ -1,6 +1,7 @@
 "use client";
 
 import { Keyboard, LogOut, Settings, Trophy } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -16,12 +17,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
+import { KeyboardShortcutsSheet } from "@/features/shared/ui/dialogs/keyboard-shortcuts-sheet";
 
 export function UserProfile() {
+  const [openShortcutsSheet, setOpenShortcutsSheet] = useState(false);
+
   const { logoutMutation, currentUser } = useAuth();
   useHotkeys("l>o", () => setOpenConfirmationDialog(true));
   const [openConfirmationDialog, setOpenConfirmationDialog] =
     useState<boolean>(false);
+
+  useHotkeys("mod+h", (e) => {
+    e.preventDefault();
+    setOpenShortcutsSheet(() => !openShortcutsSheet);
+  });
 
   return (
     <>
@@ -55,16 +64,20 @@ export function UserProfile() {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="p-1">
-            <DropdownMenuItem>
-              <Trophy className="size-4" /> Achievements
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="size-4" /> Preferences
-            </DropdownMenuItem>
+            <Link href="/preferences/achievements">
+              <DropdownMenuItem>
+                <Trophy className="size-4" /> Achievements
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/preferences">
+              <DropdownMenuItem>
+                <Settings className="size-4" /> Preferences
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="p-1">
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenShortcutsSheet(true)}>
               <Keyboard className="size-4" /> Keyboard Shortcuts
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -93,6 +106,13 @@ export function UserProfile() {
           onOpenChange={setOpenConfirmationDialog}
           onConfirm={() => logoutMutation.mutate()}
           isLoading={logoutMutation.isPending}
+        />
+      </div>
+
+      <div role="dialog">
+        <KeyboardShortcutsSheet
+          open={openShortcutsSheet}
+          onOpenChange={setOpenShortcutsSheet}
         />
       </div>
     </>

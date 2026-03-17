@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
+  deleteAccountAction,
   getCurrentUserAction,
   saveApiKeyAction,
   signInAction,
@@ -66,11 +67,25 @@ export function useAuth() {
     errorMessage: "Failed to save API key.",
   });
 
+  const deleteAccountMutation = useToastMutation({
+    mutationFn: async () => await deleteAccountAction(),
+    loadingMessage: "Deleting account...",
+    errorMessage: "An error occured while deleting your account.",
+    successMessage: "Your account has been deleted.",
+    options: {
+      onSuccess: async () => {
+        await queryClient.removeQueries({ queryKey: ["user", "me"] });
+        router.push("/");
+      },
+    },
+  });
+
   return {
     currentUser,
     userId: currentUser?.id,
     saveApiKeyMutation,
     loginMutation,
     logoutMutation,
+    deleteAccountMutation,
   };
 }
