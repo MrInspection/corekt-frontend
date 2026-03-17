@@ -105,12 +105,13 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center md:gap-1.5">
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button size="xs" variant="ghost">
-                    <GitCompare className="size-3.5" /> Compare
+                    <GitCompare className="size-3.5" />{" "}
+                    <span className="max-md:hidden">Compare</span>
                   </Button>
                 }
               />
@@ -120,7 +121,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
                 <Kbd>V</Kbd>
               </TooltipContent>
             </Tooltip>
-            <div className="h-5 w-px bg-border" />
+            <div className="h-5 w-px bg-border max-md:hidden" />
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -129,7 +130,8 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
                     variant="ghost"
                     onClick={openCreateVersionDialog}
                   >
-                    <PlusIcon className="size-3.5" /> New Version
+                    <PlusIcon className="size-3.5" />{" "}
+                    <span className="max-md:hidden">New Version</span>
                   </Button>
                 }
               />
