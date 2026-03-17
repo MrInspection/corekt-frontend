@@ -104,7 +104,7 @@ export function ProjectReportView() {
                 minor: 5,
               }}
             />
-            <ConfidenceScoreKpi score={100} />
+            <ConfidenceScoreKpi score={88.2} />
           </section>
           <section className="mt-10">
             <div className="mb-4 border-b pb-4 font-medium text-xl">Issues</div>
@@ -125,7 +125,6 @@ export function ProjectReportView() {
                     confidenceScore={dummyIssue.confidenceScore}
                     content={dummyIssue.content}
                     title={dummyIssue.title}
-                    xp={dummyIssue.xp}
                     key={dummyIssue.id}
                   />
                 ))}
