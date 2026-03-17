@@ -1,11 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
+import { siteConfig } from "@/config/site.config";
 
 export function SiteFooter() {
+  const navItems = [
+    {
+      label: "Features",
+      href: "/#features",
+    },
+    {
+      label: "Terms & Conditions",
+      href: "/legal/terms-and-conditions",
+    },
+    {
+      label: "Privacy Policy",
+      href: "/legal/privacy-policy",
+    },
+  ];
+
   return (
     <footer className="border-t py-14">
       <div className="container max-w-6xl">
-        <Link href="" className="w-fit">
+        <Link href="/" className="w-fit">
           <Image
             src="/brand/corekt-logo.svg"
             alt="Corekt Logo"
@@ -15,14 +31,16 @@ export function SiteFooter() {
           />
         </Link>
         <nav className="mt-4 flex gap-6 border-b border-dotted pb-4">
-          <p className="cursor-pointer text-muted-foreground text-sm hover:text-foreground hover:underline hover:underline-offset-4">
-            Features
-          </p>
-          <p className="text-muted-foreground text-sm">Terms & Conditions</p>
-          <p className="text-muted-foreground text-sm">Privacy Policy</p>
+          {navItems.map((item, index) => (
+            <Link href={item.href} key={index}>
+              <p className="text-muted-foreground text-sm hover:text-foreground hover:underline hover:underline-offset-4">
+                {item.label}
+              </p>
+            </Link>
+          ))}
         </nav>
         <p className="mt-4 text-muted-foreground text-sm">
-          Built by{" "}
+          Frontend built by{" "}
           <a
             href="https://moussax.vercel.app"
             target="_blank"
@@ -32,8 +50,12 @@ export function SiteFooter() {
             Moussax
           </a>
           . The source code is available on{" "}
-          {/** biome-ignore lint/a11y/useValidAnchor: req */}
-          <a href="#" className="font-medium underline underline-offset-4">
+          <a
+            href={siteConfig.repositoryUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline underline-offset-4"
+          >
             GitHub
           </a>
           .
