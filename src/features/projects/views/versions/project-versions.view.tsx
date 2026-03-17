@@ -40,12 +40,12 @@ import { useFilterState } from "@/features/shared/advanced-filter/use-filter-sta
 import { useDialogManager } from "@/features/shared/dialog-manager/dialog-manager.store";
 import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import {
   DashboardActionBar,
   DashboardContent,
   DashboardHeader,
 } from "@/features/shared/ui/dashboard-layout";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import { VERSION_FILTER_FIELDS } from "@/features/shared/ui/filter-fields";
 
 export function ProjectVersionsView({ projectId }: { projectId: string }) {

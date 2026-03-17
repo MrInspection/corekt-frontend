@@ -191,7 +191,10 @@ export function PreferencesView() {
                   <AlertDialogCancel render={<Button variant="secondary" />}>
                     Cancel
                   </AlertDialogCancel>
-                  <AlertDialogAction variant="destructive">
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={() => deleteAccountMutation.mutate()}
+                  >
                     Delete my account
                   </AlertDialogAction>
                 </DialogFooter>

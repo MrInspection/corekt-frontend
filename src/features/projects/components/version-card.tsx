@@ -33,7 +33,7 @@ import {
   versionQueryKey,
 } from "@/features/projects/hooks/use-versions.hook";
 import type { Version } from "@/features/projects/validation/versions.schema";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 
 type ProjectStatus = Version["status"];
 

@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserProfileCard } from "@/features/auth/components/user-profile-card";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
-import { KeyboardShortcutsSheet } from "@/features/shared/ui/dialogs/keyboard-shortcuts-sheet";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
+import { KeyboardShortcutsSheet } from "@/features/shared/ui/keyboard-shortcuts-sheet";
 
 export function UserProfile({ fullVersion }: { fullVersion?: boolean }) {
   const [openShortcutsSheet, setOpenShortcutsSheet] = useState(false);

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
+import { ReportGenerationLoadingState } from "@/features/projects/components/states/report-generation-loading-state";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
 import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bpmn-step";
 import { UploadDataModelStep } from "@/features/projects/components/stepper/upload-data-model-step";
@@ -15,11 +16,11 @@ import { useProject } from "@/features/projects/hooks/use-projects.hook";
 import { useVersion } from "@/features/projects/hooks/use-versions.hook";
 import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
+import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import {
   DashboardContent,
   DashboardHeader,
 } from "@/features/shared/ui/dashboard-layout";
-import { ConfirmationDialog } from "@/features/shared/ui/dialogs/confirmation-dialog";
 import { StepIndicator } from "@/features/shared/ui/step-indicator";
 
 const TOTAL_STEPS = 4;
@@ -27,6 +28,7 @@ const TOTAL_STEPS = 4;
 export function CreateVersionReportView() {
   const [currentStep, setCurrentStep] = useState(1);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
   const { controls } = useDirtyNavigationBlocker({ isDirty: hasStarted });
@@ -40,8 +42,13 @@ export function CreateVersionReportView() {
     versionId: params.version,
   });
 
-  const goToNextStep = () =>
-    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+  const goToNextStep = () => {
+    if (currentStep === TOTAL_STEPS) {
+      setIsGenerating(true);
+      return;
+    }
+    setCurrentStep((prev) => prev + 1);
+  };
 
   const stepProps = {
     onStart: () => setHasStarted(true),
@@ -59,29 +66,35 @@ export function CreateVersionReportView() {
             skippedSegments={["version"]}
           />
         </div>
-        <Button
-          size="xs"
-          variant="ghost"
-          onClick={() => setOpenCancelDialog(true)}
-        >
-          <XIcon /> Cancel
-        </Button>
+        {!isGenerating && (
+          <Button
+            size="xs"
+            variant="ghost"
+            onClick={() => setOpenCancelDialog(true)}
+          >
+            <XIcon /> Cancel
+          </Button>
+        )}
       </DashboardHeader>
       <motion.div animate={controls} className="flex flex-1 flex-col">
-        <DashboardContent className="container flex max-w-3xl flex-col justify-center">
-          <div className="text-muted-foreground text-sm">
-            Step {currentStep} of {TOTAL_STEPS}
-          </div>
-          {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
-          {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
-          {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
-          {currentStep === 4 && <UploadDataModelStep {...stepProps} />}
-          <StepIndicator
-            currentStep={currentStep}
-            totalSteps={TOTAL_STEPS}
-            className="mt-10"
-          />
-        </DashboardContent>
+        {isGenerating ? (
+          <ReportGenerationLoadingState />
+        ) : (
+          <DashboardContent className="container flex max-w-3xl flex-col justify-center">
+            <div className="text-muted-foreground text-sm">
+              Step {currentStep} of {TOTAL_STEPS}
+            </div>
+            {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
+            {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
+            {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
+            {currentStep === 4 && <UploadDataModelStep {...stepProps} />}
+            <StepIndicator
+              currentStep={currentStep}
+              totalSteps={TOTAL_STEPS}
+              className="mt-10"
+            />
+          </DashboardContent>
+        )}
       </motion.div>
 
       <div role="alertdialog">

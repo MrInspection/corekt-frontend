@@ -82,7 +82,7 @@ export function ConnectTaigaDialog({ onConnected }: ConnectTaigaDialogProps) {
             <FieldGroup className="gap-4">
               <form.Field name="username">
                 {(field) => (
-                  <FormField field={field} label="Username">
+                  <FormField field={field} label="Username or email">
                     {(isInvalid) => (
                       <Input
                         id={field.name}
