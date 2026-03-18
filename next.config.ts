@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     serverActions: {
       bodySizeLimit: "10mb",
-    }
+    },
   },
   redirects: async () => [
     {

@@ -55,7 +55,8 @@ export function useAuth() {
   const saveApiKeyMutation = useToastMutation({
     mutationFn: async (plaintextApiKey: string) => {
       const base64PublicKey = process.env.NEXT_PUBLIC_RSA_PUBLIC_KEY;
-      if (!base64PublicKey) throw new Error("Missing NEXT_PUBLIC_RSA_PUBLIC_KEY");
+      if (!base64PublicKey)
+        throw new Error("Missing NEXT_PUBLIC_RSA_PUBLIC_KEY");
       const encrypted = await encryptApiKey(plaintextApiKey, base64PublicKey);
       return await saveApiKeyAction(encrypted);
     },
