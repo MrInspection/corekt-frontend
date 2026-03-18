@@ -3,6 +3,7 @@
 import { HomeIcon, PanelLeftIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,8 +16,10 @@ import { UserProfile } from "@/features/auth/components/user-profile";
 import { NavigationLink } from "@/features/shared/navigation/navigation-link";
 
 export function DashboardSidebarSheet() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen} modal={true}>
       <SheetTrigger
         render={<Button variant="ghost" size="icon-xs" />}
         className="md:hidden"
@@ -44,7 +47,7 @@ export function DashboardSidebarSheet() {
           </nav>
         </SheetHeader>
         <SheetFooter>
-          <UserProfile fullVersion={true} />
+          <UserProfile fullVersion={true} onClose={() => setOpen(false)} />
         </SheetFooter>
       </SheetContent>
     </Sheet>

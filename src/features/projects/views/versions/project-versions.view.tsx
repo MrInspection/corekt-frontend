@@ -155,7 +155,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
           onClearFilters={clearFilters}
         />
       </DashboardActionBar>
-      <DashboardContent className="flex flex-col pt-16">
+      <DashboardContent className="flex flex-col pt-6 lg:pt-12">
         {getVersions.isPending ? (
           <VersionsLoadingState />
         ) : versions.length === 0 ? (

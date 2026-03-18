@@ -46,7 +46,7 @@ export function UploadDeliverableStep({
   return (
     <>
       <h3 className="mt-1 font-medium text-3xl tracking-tight">{title}</h3>
-      <p className="mt-2 max-w-(--breakpoint-sm) text-pretty text-muted-foreground">
+      <p className="mt-2 max-w-(--breakpoint-sm) text-pretty text-base text-muted-foreground max-sm:text-sm">
         {description}
       </p>
       <form onSubmit={handleSubmit}>
