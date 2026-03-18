@@ -106,7 +106,7 @@ export function IssueCard({
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-muted-foreground text-sm max-hidden:hidden">
-              <span className="font-medium">Click to view</span>
+              <span className="font-medium max-sm:hidden">Click to view</span>
               <ChevronRight className="size-4" />
             </div>
           </div>

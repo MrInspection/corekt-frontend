@@ -13,17 +13,17 @@ export default function Layout({ children }: { children: ReactNode }) {
             <ChevronLeftIcon /> Back
           </Button>
         </Link>
-        <div className="w-full max-w-md">{children}</div>
+        <div className="w-full max-w-md max-2xl:px-4">{children}</div>
       </section>
-      <section className="relative col-span-2 overflow-hidden rounded-lg border bg-gray-100 p-16 shadow-xs max-xl:hidden">
+      <section className="relative col-span-2 overflow-hidden rounded border bg-gray-100 p-14 shadow-xs max-xl:hidden">
         <h3 className="max-w-(--breakpoint-lg) font-semibold text-4xl tracking-tight">
-          Hi, I'm your AI powered coherence tool, Corekt.
+          Hi, I'm your AI coherence tool, Corekt.
         </h3>
         <p className="mt-2.5 max-w-prose text-lg text-muted-foreground">
           I analyze your business deliverables, detect inconsistencies, and
           suggest precise improvements to enhance clarity and alignment.
         </p>
-        <div className="absolute top-48 right-0 bottom-0 left-14">
+        <div className="absolute top-48 right-0 bottom-0 left-10">
           <Image
             src="/product-image.png"
             alt="Corekt product preview"

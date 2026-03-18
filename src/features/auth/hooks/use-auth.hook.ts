@@ -55,16 +55,19 @@ export function useAuth() {
   const saveApiKeyMutation = useToastMutation({
     mutationFn: async (plaintextApiKey: string) => {
       const base64PublicKey = process.env.NEXT_PUBLIC_RSA_PUBLIC_KEY;
-      if (!base64PublicKey) {
+      if (!base64PublicKey)
         throw new Error("Missing NEXT_PUBLIC_RSA_PUBLIC_KEY");
-      }
-
       const encrypted = await encryptApiKey(plaintextApiKey, base64PublicKey);
       return await saveApiKeyAction(encrypted);
     },
     loadingMessage: "Saving API key...",
     successMessage: "API key saved.",
     errorMessage: "Failed to save API key.",
+    options: {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ["user", "me"] });
+      },
+    },
   });
 
   const deleteAccountMutation = useToastMutation({
@@ -74,7 +77,7 @@ export function useAuth() {
     successMessage: "Your account has been deleted.",
     options: {
       onSuccess: async () => {
-        await queryClient.removeQueries({ queryKey: ["user", "me"] });
+        queryClient.removeQueries({ queryKey: ["user", "me"] });
         router.push("/");
       },
     },

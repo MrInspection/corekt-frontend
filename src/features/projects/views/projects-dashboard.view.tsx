@@ -85,7 +85,7 @@ export function ProjectsDashboardView() {
           onClearFilters={clearFilters}
         />
       </DashboardActionBar>
-      <DashboardContent className="flex flex-col pt-16">
+      <DashboardContent className="flex flex-col pt-6 lg:pt-12">
         {getProjects.isPending ? (
           <ProjectsLoadingState />
         ) : projects.length === 0 ? (

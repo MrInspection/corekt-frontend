@@ -92,8 +92,8 @@ export function ProjectReportView() {
           onClearFilters={clearFilters}
         />
       </DashboardActionBar>
-      <DashboardContent>
-        <div className="container my-16 max-w-5xl">
+      <DashboardContent className="py-6 lg:py-12">
+        <div className="container max-w-5xl">
           <section className="grid gap-4 lg:grid-cols-2">
             <TotalIssuesKpi
               issuesCount={20}
@@ -104,7 +104,7 @@ export function ProjectReportView() {
                 minor: 5,
               }}
             />
-            <ConfidenceScoreKpi score={88.2} />
+            <ConfidenceScoreKpi score={84.83} />
           </section>
           <section className="mt-10">
             <div className="mb-4 border-b pb-4 font-medium text-xl">Issues</div>

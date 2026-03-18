@@ -60,7 +60,7 @@ export function PreferencesView() {
       <DashboardHeader className="md:hidden">
         <SettingsMobileSheet />
       </DashboardHeader>
-      <DashboardContent className="px-4 py-16">
+      <DashboardContent className="py-16">
         <div className="container max-w-2xl">
           <div className="px-4 font-medium text-2xl">Preferences</div>
           <h4 className="mt-8 mb-4 px-4 font-medium text-lg/6">Profile</h4>
@@ -103,7 +103,7 @@ export function PreferencesView() {
             <Dialog open={openAPIKeyDialog} onOpenChange={setOpenAPIKeyDialog}>
               <DialogTrigger render={<Button variant="outline" size="sm" />}>
                 <PlusIcon className="size-4" />{" "}
-                {currentUser?.mistralToken !== "" ? "Change" : "Add"} API key
+                {currentUser?.mistralToken ? "Change" : "Add"} API key
               </DialogTrigger>
               <DialogContent className="gap-0 p-0">
                 <DialogHeader className="border-b p-6">

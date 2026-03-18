@@ -37,7 +37,6 @@ export function LoginForm() {
           Sign in to pick up where you left off.
         </div>
       </div>
-
       <div className="space-y-4">
         <form
           id="corekt-login-form"
@@ -93,7 +92,7 @@ export function LoginForm() {
       >
         Continue <ChevronRight className="size-4" />
       </Button>
-      <div className="absolute bottom-8 left-1/2 mx-auto w-max max-w-[40%] -translate-x-1/2 text-center text-muted-foreground text-xs">
+      <p className="mx-auto mt-6 max-w-xs text-center text-muted-foreground text-xs">
         By creating an account, you agree to Corekt's{" "}
         <Link
           href="/legal/terms-and-conditions"
@@ -109,7 +108,7 @@ export function LoginForm() {
           Privacy Policy
         </Link>
         .
-      </div>
+      </p>
     </main>
   );
 }

@@ -40,7 +40,7 @@ export function SiteFooter() {
           ))}
         </nav>
         <p className="mt-4 text-muted-foreground text-sm">
-          Frontend built by{" "}
+          Built by{" "}
           <a
             href="https://moussax.vercel.app"
             target="_blank"

@@ -41,7 +41,7 @@ export function ImportUserStoriesStep({
       <h3 className="mt-1 font-medium text-3xl tracking-tight">
         Import User Stories
       </h3>
-      <p className="mt-2 max-w-(--breakpoint-sm) text-pretty text-muted-foreground">
+      <p className="mt-2 max-w-(--breakpoint-sm) text-pretty text-base text-muted-foreground max-sm:text-sm">
         Connect your Taiga account to import the user stories linked to this
         project. Corekt will use them to verify their coverage and consistency
         across your other artifacts.

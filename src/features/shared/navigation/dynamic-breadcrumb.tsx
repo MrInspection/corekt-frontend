@@ -54,7 +54,7 @@ function CollapsedBreadcrumbs({ items }: { items: BreadcrumbEntry[] }) {
   return (
     <BreadcrumbItem>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-1">
+        <DropdownMenuTrigger className="flex translate-y-[1.4px] items-center gap-1">
           <BreadcrumbEllipsis className="size-4" />
           <span className="sr-only">Toggle menu</span>
         </DropdownMenuTrigger>
