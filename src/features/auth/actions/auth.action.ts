@@ -38,7 +38,8 @@ export const saveApiKeyAction = authAction
   });
 
 export const deleteAccountAction = authAction.action(async ({ ctx: user }) => {
-  return await upfetchServer(`/user/${user.id}`, {
+  await upfetchServer(`/user/${user.id}`, {
     method: "DELETE",
   });
+  return await deleteSessionToken();
 });

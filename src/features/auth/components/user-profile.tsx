@@ -20,7 +20,13 @@ import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
 import { KeyboardShortcutsSheet } from "@/features/shared/ui/keyboard-shortcuts-sheet";
 
-export function UserProfile({ fullVersion }: { fullVersion?: boolean }) {
+export function UserProfile({
+  fullVersion,
+  onClose,
+}: {
+  fullVersion?: boolean;
+  onClose?: () => void;
+}) {
   const [openShortcutsSheet, setOpenShortcutsSheet] = useState(false);
 
   const { logoutMutation, currentUser } = useAuth();
@@ -66,9 +72,14 @@ export function UserProfile({ fullVersion }: { fullVersion?: boolean }) {
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup className="p-1">
-            <DropdownMenuItem onClick={() => setOpenShortcutsSheet(true)}>
+          <DropdownMenuSeparator className="max-md:hidden" />
+          <DropdownMenuGroup className="p-1 max-md:hidden">
+            <DropdownMenuItem
+              onClick={() => {
+                onClose?.();
+                setTimeout(() => setOpenShortcutsSheet(true), 150);
+              }}
+            >
               <Keyboard className="size-4" /> Keyboard Shortcuts
             </DropdownMenuItem>
           </DropdownMenuGroup>
