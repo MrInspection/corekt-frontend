@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
     authInterrupts: true,
+    serverActions: {
+      bodySizeLimit: "10mb",
+    }
   },
   redirects: async () => [
     {
