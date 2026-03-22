@@ -38,7 +38,11 @@ export const getUser = async () => {
   const token = await getSessionToken();
   if (!token) return null;
 
-  return ((await getCurrentUser(token)) as User) ?? null;
+  try {
+    return ((await getCurrentUser(token)) as User) ?? null;
+  } catch {
+    return null;
+  }
 };
 
 export const getRequiredUser = async () => {
