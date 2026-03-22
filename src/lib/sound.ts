@@ -1,5 +1,4 @@
-export type SoundType =
-  | "achievementGranted"
+export type SoundType = "achievementGranted";
 
 const soundMap: Record<SoundType, string> = {
   achievementGranted: "/sounds/achievement_granted.ogg",

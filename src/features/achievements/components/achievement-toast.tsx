@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { Icons } from "@/features/shared/ui/icons";
-import {playSound} from "@/lib/sound";
+import { playSound } from "@/lib/sound";
 
 type AchievementToastProps = {
   name: string;

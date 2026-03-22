@@ -10,4 +10,4 @@ export type UnlockedAchievement = {
   name: string;
   description: string;
   acquiredAt: string;
-}
+};
