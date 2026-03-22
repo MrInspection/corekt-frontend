@@ -25,9 +25,18 @@ export const getProjectAction = authAction
 export const createProjectAction = authAction
   .inputSchema(ProjectFormSchema)
   .action(async ({ parsedInput: payload }) => {
-    return await upfetchServer<Project>("/projects", {
+    return await upfetchServer<{
+      project: Project;
+      unlockedAchievementIds: string[];
+    }>("/projects", {
       method: "POST",
       body: payload,
+      parseResponse: async (res) => {
+        const project = await res.json();
+        const header = res.headers.get("X-Unlocked-Achievements") ?? "";
+        const unlockedAchievementIds = header.split(",").filter(Boolean);
+        return { project, unlockedAchievementIds };
+      },
     });
   });
 

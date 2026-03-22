@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAchievementNotifications } from "@/features/achievements/hooks/use-achievement-notifications.hook";
 import {
   createProjectAction,
   deleteProjectAction,
@@ -16,6 +17,7 @@ export const projectQueryKey = (userId: string, projectId: string) =>
 
 export function useProjects(userId?: string) {
   const queryClient = useQueryClient();
+  const { notify } = useAchievementNotifications();
 
   const getProjects = useQuery({
     queryKey: projectsQueryKey(userId ?? ""),
@@ -34,6 +36,9 @@ export function useProjects(userId?: string) {
     successMessage: "Project created successfully!",
     errorMessage: "Unable to create project.",
     options: {
+      onSuccess: async (data) => {
+        await notify(data?.unlockedAchievementIds ?? []);
+      },
       onSettled: () => {
         if (!userId) return;
         queryClient.invalidateQueries({
