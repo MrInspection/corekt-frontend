@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,7 +59,9 @@ export function EnumValuePicker({
         render={
           <Button variant="outline" size="xs" autoFocus>
             {selectedValues.length === 0 ? (
-              <span className="text-muted-foreground italic">Pick a value</span>
+              <span className="inline-flex items-center gap-1 text-muted-foreground">
+                Pick a value <ChevronDownIcon />
+              </span>
             ) : (
               <>
                 {!isMulti && selectedValues.length === 1 && (

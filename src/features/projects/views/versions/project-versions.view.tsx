@@ -75,6 +75,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
       projectId,
     });
   useHotkeys("n>v", openCreateVersionDialog);
+  useHotkeys("c>v", () => router.push(`/projects/${projectId}/compare`));
 
   const visibleRows = versions.filter((row) =>
     matchesAllFilters(row, filters, VERSION_FILTER_FIELDS),
@@ -109,7 +110,13 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <Button size="xs" variant="ghost">
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    onClick={() =>
+                      router.push(`/projects/${projectId}/compare`)
+                    }
+                  >
                     <GitCompare className="size-3.5" />{" "}
                     <span className="max-md:hidden">Compare</span>
                   </Button>
@@ -144,7 +151,7 @@ export function ProjectVersionsView({ projectId }: { projectId: string }) {
           </div>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-25">
+      <DashboardActionBar className="bg-gray-50">
         <FilterBar
           fields={VERSION_FILTER_FIELDS}
           filters={filters}

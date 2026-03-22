@@ -68,7 +68,7 @@ export function CreateProjectDialog({
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
-                        placeholder="Project Name"
+                        placeholder="Project name"
                       />
                     )}
                   </FormField>

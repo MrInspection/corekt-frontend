@@ -74,7 +74,7 @@ export function ProjectsDashboardView() {
           </Tooltip>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-25">
+      <DashboardActionBar className="bg-gray-50">
         <FilterBar
           fields={PROJECT_FILTER_FIELDS}
           filters={filters}

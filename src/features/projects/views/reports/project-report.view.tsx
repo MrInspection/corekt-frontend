@@ -81,7 +81,7 @@ export function ProjectReportView() {
           </Tooltip>
         </div>
       </DashboardHeader>
-      <DashboardActionBar className="bg-gray-25">
+      <DashboardActionBar className="bg-gray-50">
         <FilterBar
           fields={ISSUE_FILTER_FIELDS}
           filters={filters}

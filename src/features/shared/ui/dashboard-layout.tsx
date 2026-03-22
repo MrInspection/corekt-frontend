@@ -64,7 +64,7 @@ function DashboardLayout({ children, className }: DashboardProps) {
   return (
     <main
       className={cn(
-        "relative my-2 mr-2 flex flex-1 flex-col rounded border bg-background shadow-xs max-md:ml-2",
+        "relative my-2 mr-2 flex flex-1 flex-col rounded border bg-background shadow-sm max-md:ml-2",
         className,
       )}
       data-slot="dashboard-layout"
