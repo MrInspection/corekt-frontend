@@ -37,8 +37,10 @@ export function TotalIssuesKpi({
   className,
 }: TotalIssuesKPIProps) {
   const total =
-    counts?.resolved ??
-    (counts?.minor ?? 0) + (counts?.major ?? 0) + (counts?.critical ?? 0);
+    (counts.resolved ?? 0) +
+    (counts.minor ?? 0) +
+    (counts.major ?? 0) +
+    (counts.critical ?? 0);
 
   if (!counts) {
     return (

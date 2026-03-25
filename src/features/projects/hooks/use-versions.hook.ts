@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getIssuesAction } from "@/features/projects/actions/issues.action";
 import {
   createVersionAction,
   deleteVersionAction,
@@ -117,6 +118,24 @@ export function useVersion({
     queryKey: versionQueryKey(projectId, versionId),
     queryFn: async () =>
       await getVersionAction({ projectId, versionId }).then((res) => res?.data),
+    enabled: !!projectId && !!versionId,
+  });
+}
+
+export function useVersionIssues({
+  projectId,
+  versionId,
+}: {
+  projectId: string;
+  versionId: string;
+}) {
+  return useQuery({
+    queryKey: ["issues", projectId, versionId],
+    queryFn: async () => {
+      return await getIssuesAction({ projectId, versionId }).then(
+        (res) => res?.data,
+      );
+    },
     enabled: !!projectId && !!versionId,
   });
 }

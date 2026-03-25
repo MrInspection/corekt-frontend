@@ -5,7 +5,10 @@ import {
   ChevronRight,
   CircleAlertIcon,
   CircleDot,
+  FileText,
   FlagTriangleRight,
+  GitCompare,
+  Globe,
   type LucideIcon,
   OctagonX,
   SquareCheck,
@@ -23,45 +26,86 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  dataTypeLabel,
+  fileTypeDescription,
+  type Issue,
+  type IssueMatch,
+  type IssueSeverity,
+  type ParsedDataRef,
+} from "@/features/projects/validation/issues.types";
 import { MarkdownRenderer } from "@/features/shared/markdown/markdown-renderer";
+import { cn } from "@/lib/utils";
 
-export type IssueSeverity = "critical" | "major" | "minor";
+type IssueCardProps = Issue;
 
 type SeverityConfig = {
   label: string;
   icon: LucideIcon;
   labelColor: string;
+  dotColor: string;
 };
 
 const severityConfig: Record<IssueSeverity, SeverityConfig> = {
-  critical: {
+  CRITICAL: {
     label: "Critical",
     icon: OctagonX,
     labelColor: "text-error-500",
+    dotColor: "bg-error-500",
   },
-  major: {
+  MAJOR: {
     label: "Major",
     icon: CircleAlertIcon,
     labelColor: "text-warning-500",
+    dotColor: "bg-warning-500",
   },
-  minor: {
+  MINOR: {
     label: "Minor",
     icon: CircleDot,
     labelColor: "text-gray-500",
+    dotColor: "bg-gray-500",
   },
 };
 
-type IssueCardProps = {
-  id: string;
-  title: string;
-  description: string;
-  severity: IssueSeverity;
-  isResolved: boolean;
-  confidenceScore: number;
-  content: string;
+type MatchConfig = {
+  label: string;
 };
 
-function IssueCardSeverity({ severity }: { severity: IssueSeverity }) {
+const matchConfig: Record<IssueMatch, MatchConfig> = {
+  EXACT: {
+    label: "Exact",
+  },
+  SEMANTIC: {
+    label: "Semantic",
+  },
+  MISSING: {
+    label: "Missing",
+  },
+};
+
+function deriveIssueTitle(sourceParsedData: ParsedDataRef): string {
+  return `${sourceParsedData.dataType}: ${sourceParsedData.content}`;
+}
+
+function buildSheetMarkdownContent(
+  justification: string,
+  suggestion: string | null,
+): string {
+  const suggestionSection = suggestion
+    ? `## Suggestion\n${suggestion}`
+    : "## Suggestion\n_No suggestion provided._";
+
+  return ["## Justification", justification, "", suggestionSection, ""].join(
+    "\n",
+  );
+}
+
+function IssueCardSeverityLabel({ severity }: { severity: IssueSeverity }) {
   const { label, icon: Icon, labelColor } = severityConfig[severity];
 
   return (
@@ -73,30 +117,36 @@ function IssueCardSeverity({ severity }: { severity: IssueSeverity }) {
 }
 
 export function IssueCard({
-  id,
-  title,
-  description,
+  match,
   severity,
-  isResolved,
   confidenceScore,
-  content,
+  justification,
+  suggestion,
+  sourceParsedData,
+  targetParsedData,
+  isResolved = false,
 }: IssueCardProps) {
-  const [openSheet, setOpenSheet] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const title = deriveIssueTitle(sourceParsedData);
+  const sheetContent = buildSheetMarkdownContent(justification, suggestion);
+
   const { label: severityLabel } = severityConfig[severity];
+  const { label: matchLabel } = matchConfig[match];
 
   return (
-    <Sheet open={openSheet} onOpenChange={setOpenSheet} modal={true}>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen} modal={true}>
       <SheetTrigger className="text-left focus:rounded-2xl">
         <section className="cursor-pointer rounded-2xl border bg-card shadow-xs transition-transform duration-150 hover:-translate-y-0.5 hover:border-gray-300 hover:border-b-4 hover:shadow-lg">
           <div className="p-6">
-            <p className="font-semibold text-base">{title}</p>
-            <p className="mt-1 text-pretty text-muted-foreground text-sm">
-              {description}
+            <p className="line-clamp-1 font-semibold text-base">{title}</p>
+            <p className="mt-1 line-clamp-2 text-pretty text-muted-foreground text-sm">
+              {justification}
             </p>
           </div>
           <div className="flex items-center justify-between rounded-b-2xl border-t bg-gray-25 px-6 py-4">
             <div className="flex items-center gap-3">
-              <IssueCardSeverity severity={severity} />
+              <IssueCardSeverityLabel severity={severity} />
               <div
                 className="flex items-center gap-1.5 text-sm text-success-600"
                 hidden={!isResolved}
@@ -112,34 +162,46 @@ export function IssueCard({
           </div>
         </section>
       </SheetTrigger>
+
       <SheetContent
         className="flex min-w-full flex-1 flex-col gap-0 divide-y overflow-hidden md:mt-4 md:mr-4 md:max-h-[97vh] md:min-w-116 md:rounded-2xl"
         showCloseButton={false}
       >
         <SheetHeader className="p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between gap-8">
             <SheetTitle className="text-base">{title}</SheetTitle>
             <SheetClose render={<Button variant="ghost" size="icon-sm" />}>
               <XIcon />
             </SheetClose>
           </div>
-          <div className="space-y-3 pt-3">
+
+          <div className="space-y-3 pt-4">
             <div className="grid grid-cols-2 gap-2">
-              <div className="inline-flex items-center gap-2">
+              <div className="inline-flex items-center gap-2 text-muted-foreground text-sm">
                 <CircleDot className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
                 <span>Severity</span>
               </div>
-              <Badge variant="outline" className="rounded">
+              <Badge variant="outline" className="w-fit rounded">
+                <span
+                  className={cn(
+                    "size-2 rounded-full",
+                    severityConfig[severity].dotColor,
+                  )}
+                />{" "}
                 {severityLabel}
               </Badge>
             </div>
+
             <div className="grid grid-cols-2 gap-2">
-              <div className="inline-flex items-center gap-2">
-                <SquareCheck className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
-                <span>Confidence Score</span>
+              <div className="inline-flex items-center gap-2 text-muted-foreground text-sm">
+                <GitCompare className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
+                <span>Match</span>
               </div>
-              <p className="font-semibold">{confidenceScore.toFixed(2)}%</p>
+              <Badge variant="outline" className="w-fit rounded">
+                {matchLabel}
+              </Badge>
             </div>
+
             <div className="grid grid-cols-2 gap-2">
               <div className="inline-flex items-center gap-2">
                 <FlagTriangleRight className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
@@ -149,6 +211,66 @@ export function IssueCard({
                 {isResolved ? "Resolved" : "Not Resolved"}
               </p>
             </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="inline-flex items-center gap-2 text-muted-foreground text-sm">
+                <SquareCheck className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
+                <span>Confidence score</span>
+              </div>
+              <p className="font-semibold text-sm">
+                {confidenceScore.toFixed(2)}%
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <div className="inline-flex items-center gap-2 text-muted-foreground text-sm">
+                <Globe className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
+                <span>
+                  Detection source
+                  {sourceParsedData.fileId === targetParsedData.fileId
+                    ? null
+                    : "s"}
+                </span>
+              </div>
+
+              <div className="ml-2 space-y-2 border-l-2 px-4 pt-2">
+                <div className="inline-flex items-start gap-2">
+                  <FileText className="size-4.5 shrink-0" />
+                  <span>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span className="font-medium">
+                          {sourceParsedData.fileName}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {fileTypeDescription[sourceParsedData.fileType]}
+                      </TooltipContent>
+                    </Tooltip>{" "}
+                    {dataTypeLabel[sourceParsedData.dataType]}.
+                  </span>
+                </div>
+                {sourceParsedData.fileId !== targetParsedData.fileId && (
+                  <div className="inline-flex items-start gap-2">
+                    <FileText className="size-4.5 shrink-0" />
+                    <span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span className="font-medium">
+                            {targetParsedData.fileName}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {fileTypeDescription[targetParsedData.fileType]}
+                        </TooltipContent>
+                      </Tooltip>{" "}
+                      {dataTypeLabel[targetParsedData.dataType]}.
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <Button
               variant="outline"
               className="mt-4 w-full"
@@ -158,8 +280,8 @@ export function IssueCard({
             </Button>
           </div>
         </SheetHeader>
-        <div className="flex flex-1 grow flex-col overflow-y-auto p-6">
-          <MarkdownRenderer content={content} />
+        <div className="flex flex-1 grow flex-col gap-4 overflow-y-auto p-6 pt-1">
+          <MarkdownRenderer content={sheetContent} />
         </div>
         <SheetFooter>
           <Button disabled={isResolved}>Mark as resolved</Button>
