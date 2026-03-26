@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Progress } from "@/components/ui/progress";
 
 export function ReportGenerationLoadingState() {
   return (
@@ -19,7 +18,6 @@ export function ReportGenerationLoadingState() {
         generating a detailed report. Please keep this page open until the
         process is complete.
       </p>
-      <Progress className="mt-10 w-[60%]" value={50} />
     </div>
   );
 }

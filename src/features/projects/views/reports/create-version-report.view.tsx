@@ -60,8 +60,9 @@ export function CreateVersionReportView() {
     });
 
     if (result?.data) {
+      setHasStarted(false);
       router.push(
-        `/dashboard/projects/${params.projectId}/version/${params.version}`,
+        `/projects/${params.projectId}/version/${params.version}/report`,
       );
       return;
     }
