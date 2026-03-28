@@ -19,3 +19,21 @@ export const getIssuesAction = actionClient
       { method: "GET" },
     );
   });
+
+export const deleteDatalinkAction = actionClient
+  .inputSchema(
+    z.object({
+      versionId: z.uuid(),
+      projectId: z.uuid(),
+      datalinkId: z.uuid(),
+    }),
+  )
+  .action(async ({ parsedInput: payload }) => {
+    const { versionId, projectId, datalinkId } = payload;
+    return await upfetchServer(
+      `/projects/${projectId}/versions/${versionId}/analysis/datalink/${datalinkId}`,
+      {
+        method: "DELETE",
+      },
+    );
+  });

@@ -15,11 +15,9 @@ import { IssueCard } from "@/features/projects/components/issues/issue-card";
 import { TotalIssuesKpi } from "@/features/projects/components/issues/total-issues-kpi";
 import { IssuesLoadingState } from "@/features/projects/components/states/issues-loading-state";
 import { NoIssuesState } from "@/features/projects/components/states/no-issues-state";
+import { useVersionIssues } from "@/features/projects/hooks/use-issues.hook";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
-import {
-  useVersion,
-  useVersionIssues,
-} from "@/features/projects/hooks/use-versions.hook";
+import { useVersion } from "@/features/projects/hooks/use-versions.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
@@ -44,7 +42,7 @@ export function ProjectReportView() {
     versionId: params.version,
   });
 
-  const getIssues = useVersionIssues({
+  const { getIssues } = useVersionIssues({
     projectId: params.projectId,
     versionId: params.version,
   });
