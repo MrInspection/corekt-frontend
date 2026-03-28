@@ -2,6 +2,7 @@
 
 import { Download } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import {
@@ -42,11 +43,13 @@ export function ProjectReportView() {
     versionId: params.version,
   });
 
-  const { getIssues } = useVersionIssues({
+  const { getIssues, exportPDFReport } = useVersionIssues({
     projectId: params.projectId,
     versionId: params.version,
   });
   const issues = getIssues.data ?? [];
+
+  useHotkeys("e>r", () => exportPDFReport.mutate());
 
   const {
     filters,
@@ -94,7 +97,15 @@ export function ProjectReportView() {
           </div>
           <Tooltip>
             <TooltipTrigger
-              render={<Button size="xs" variant="ghost" disabled />}
+              render={
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => exportPDFReport.mutate()}
+                  isLoading={exportPDFReport.isPending}
+                  isLoadingText="Exporting..."
+                />
+              }
             >
               <Download className="size-3.5" /> Export
             </TooltipTrigger>
