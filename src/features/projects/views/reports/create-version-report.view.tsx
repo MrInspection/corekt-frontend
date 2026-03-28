@@ -2,10 +2,11 @@
 
 import { XIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
+import { getIssuesAction } from "@/features/projects/actions/issues.action";
 import { ReportGenerationLoadingState } from "@/features/projects/components/states/report-generation-loading-state";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
 import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bpmn-step";
@@ -22,15 +23,20 @@ import {
   DashboardHeader,
 } from "@/features/shared/ui/dashboard-layout";
 import { StepIndicator } from "@/features/shared/ui/step-indicator";
+import { wait } from "@/lib/utils";
 
 const TOTAL_STEPS = 4;
+const ANALYSIS_RETRY_DELAY_MS = 1500;
+const ANALYSIS_MAX_ATTEMPTS = 6;
 
 export function CreateVersionReportView() {
   const [currentStep, setCurrentStep] = useState(1);
   const [hasStarted, setHasStarted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationFailed, setGenerationFailed] = useState(false);
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
 
+  const router = useRouter();
   const { controls } = useDirtyNavigationBlocker({ isDirty: hasStarted });
   const params = useParams<{ projectId: string; version: string }>();
 
@@ -42,12 +48,55 @@ export function CreateVersionReportView() {
     versionId: params.version,
   });
 
-  const goToNextStep = () => {
-    if (currentStep === TOTAL_STEPS) {
-      setIsGenerating(true);
+  const hasInterviewData = (
+    issues: Awaited<ReturnType<typeof getIssuesAction>>["data"],
+  ) =>
+    (issues ?? []).some(
+      (issue) =>
+        issue.sourceParsedData.fileType === "INTERVIEW" ||
+        issue.targetParsedData.fileType === "INTERVIEW",
+    );
+
+  const startAnalysisWithRetry = async () => {
+    let latestResult: Awaited<ReturnType<typeof getIssuesAction>> | undefined;
+
+    for (let attempt = 0; attempt < ANALYSIS_MAX_ATTEMPTS; attempt++) {
+      if (attempt > 0) await wait(ANALYSIS_RETRY_DELAY_MS);
+
+      latestResult = await getIssuesAction({
+        projectId: params.projectId,
+        versionId: params.version,
+      });
+
+      if (latestResult?.data && hasInterviewData(latestResult.data)) {
+        return latestResult;
+      }
+    }
+
+    return latestResult;
+  };
+
+  const goToNextStep = async () => {
+    if (currentStep < TOTAL_STEPS) {
+      setCurrentStep((prev) => prev + 1);
       return;
     }
-    setCurrentStep((prev) => prev + 1);
+
+    setIsGenerating(true);
+    setGenerationFailed(false);
+
+    const result = await startAnalysisWithRetry();
+
+    if (result?.data) {
+      setHasStarted(false);
+      router.push(
+        `/projects/${params.projectId}/version/${params.version}/report`,
+      );
+      return;
+    }
+
+    setIsGenerating(false);
+    setGenerationFailed(true);
   };
 
   const stepProps = {
@@ -84,6 +133,11 @@ export function CreateVersionReportView() {
             <div className="text-muted-foreground text-sm">
               Step {currentStep} of {TOTAL_STEPS}
             </div>
+            {generationFailed && (
+              <p className="text-destructive text-sm">
+                Analysis failed. Please try again.
+              </p>
+            )}
             {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
             {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
             {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
@@ -96,7 +150,6 @@ export function CreateVersionReportView() {
           </DashboardContent>
         )}
       </motion.div>
-
       <div role="alertdialog">
         <ConfirmationDialog
           content={{

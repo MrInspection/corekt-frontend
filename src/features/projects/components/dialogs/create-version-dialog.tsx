@@ -77,7 +77,7 @@ export function CreateVersionDialog({
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
-                        placeholder="Version Name"
+                        placeholder="Version name"
                       />
                       {isInvalid && (
                         <FieldError errors={field.state.meta.errors} />

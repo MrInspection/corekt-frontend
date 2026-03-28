@@ -35,7 +35,7 @@ export const PROJECT_FILTER_FIELDS: FilterField[] = [
   },
   {
     id: "createdAt",
-    label: "Creation Date",
+    label: "Created Date",
     type: "date",
     icon: <CalendarIcon className="size-3.5" />,
   },
@@ -78,7 +78,7 @@ export const VERSION_FILTER_FIELDS: FilterField[] = [
   },
   {
     id: "createdAt",
-    label: "Creation Date",
+    label: "Created Date",
     type: "date",
     icon: <CalendarIcon className="size-3.5" />,
   },
@@ -88,12 +88,6 @@ export const ISSUE_FILTER_FIELDS: FilterField[] = [
   {
     id: "title",
     label: "Title",
-    type: "text",
-    icon: <TextIcon className="size-3.5" />,
-  },
-  {
-    id: "content",
-    label: "Content",
     type: "text",
     icon: <TextIcon className="size-3.5" />,
   },

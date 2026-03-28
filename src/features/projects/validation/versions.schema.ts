@@ -9,6 +9,27 @@ export const VersionFormSchema = z.object({
 
 export type VersionForm = z.infer<typeof VersionFormSchema>;
 
+export const ParsedDataRefSchema = z.object({
+  parsedDataId: z.string(),
+  dataType: z.enum(["ACTOR", "FLOW", "ACTION", "US", "ENTITY", "RELATION"]),
+  content: z.string(),
+  fileId: z.string(),
+  fileName: z.string(),
+  fileType: z.enum(["BPMN", "US", "INTERVIEW", "MCD"]),
+});
+
+export const IssueSchema = z.object({
+  id: z.string(),
+  match: z.enum(["EXACT", "SEMANTIC", "MISSING"]),
+  severity: z.enum(["CRITICAL", "MAJOR", "MINOR"]),
+  confidenceScore: z.number(),
+  justification: z.string(),
+  suggestion: z.string().nullable(),
+  sourceParsedData: ParsedDataRefSchema,
+  targetParsedData: ParsedDataRefSchema,
+  isResolved: z.boolean(),
+});
+
 export const VersionSchema = z.object({
   id: z.uuid(),
   title: z.string(),
@@ -20,6 +41,7 @@ export const VersionSchema = z.object({
     critical: z.number(),
     resolved: z.number(),
   }),
+  dataLinks: z.array(IssueSchema),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

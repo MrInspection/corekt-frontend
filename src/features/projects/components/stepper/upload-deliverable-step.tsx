@@ -2,7 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { type SyntheticEvent, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { uploadFileAction } from "@/features/projects/actions/files.action";
 import type { DeliverableType } from "@/features/projects/validation/files.schema";
@@ -34,11 +34,17 @@ export function UploadDeliverableStep({
   const [file, setFile] = useState<File | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
     startTransition(async () => {
-      await uploadFileAction({ projectId, versionId: version, fileType, file });
+      const result = await uploadFileAction({
+        projectId,
+        versionId: version,
+        fileType,
+        file,
+      });
+      if (result.serverError || result.validationErrors) return;
       onNext();
     });
   };

@@ -24,7 +24,6 @@ type IssueSegmentConfig = {
 };
 
 const ISSUE_SEGMENTS: IssueSegmentConfig[] = [
-  { key: "resolved", label: "Resolved", colorClass: "bg-success-500" },
   { key: "minor", label: "Minor", colorClass: "bg-gray-500" },
   { key: "major", label: "Major", colorClass: "bg-warning-500" },
   { key: "critical", label: "Critical", colorClass: "bg-error-500" },
@@ -37,8 +36,7 @@ export function TotalIssuesKpi({
   className,
 }: TotalIssuesKPIProps) {
   const total =
-    counts?.resolved ??
-    (counts?.minor ?? 0) + (counts?.major ?? 0) + (counts?.critical ?? 0);
+    (counts.minor ?? 0) + (counts.major ?? 0) + (counts.critical ?? 0);
 
   if (!counts) {
     return (
