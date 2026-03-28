@@ -27,7 +27,6 @@ export type Issue = {
   suggestion: string | null;
   sourceParsedData: ParsedDataRef;
   targetParsedData: ParsedDataRef;
-  isResolved: boolean;
 };
 
 export const dataTypeLabel: Record<DataType, string> = {

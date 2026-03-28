@@ -2,6 +2,7 @@
 
 import { Download } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import {
@@ -15,11 +16,9 @@ import { IssueCard } from "@/features/projects/components/issues/issue-card";
 import { TotalIssuesKpi } from "@/features/projects/components/issues/total-issues-kpi";
 import { IssuesLoadingState } from "@/features/projects/components/states/issues-loading-state";
 import { NoIssuesState } from "@/features/projects/components/states/no-issues-state";
+import { useVersionIssues } from "@/features/projects/hooks/use-issues.hook";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
-import {
-  useVersion,
-  useVersionIssues,
-} from "@/features/projects/hooks/use-versions.hook";
+import { useVersion } from "@/features/projects/hooks/use-versions.hook";
 import { FilterBar } from "@/features/shared/advanced-filter/filter-bar";
 import { FilterEmptyState } from "@/features/shared/advanced-filter/filter-empty-state";
 import { matchesAllFilters } from "@/features/shared/advanced-filter/filters.type";
@@ -44,11 +43,13 @@ export function ProjectReportView() {
     versionId: params.version,
   });
 
-  const getIssues = useVersionIssues({
+  const { getIssues, exportPDFReport } = useVersionIssues({
     projectId: params.projectId,
     versionId: params.version,
   });
   const issues = getIssues.data ?? [];
+
+  useHotkeys("e>r", () => exportPDFReport.mutate());
 
   const {
     filters,
@@ -96,7 +97,15 @@ export function ProjectReportView() {
           </div>
           <Tooltip>
             <TooltipTrigger
-              render={<Button size="xs" variant="ghost" disabled />}
+              render={
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => exportPDFReport.mutate()}
+                  isLoading={exportPDFReport.isPending}
+                  isLoadingText="Exporting..."
+                />
+              }
             >
               <Download className="size-3.5" /> Export
             </TooltipTrigger>

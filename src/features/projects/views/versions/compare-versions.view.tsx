@@ -14,10 +14,10 @@ import { useAuth } from "@/features/auth/hooks/use-auth.hook";
 import { CompareSection } from "@/features/projects/components/comparator/compare-section";
 import { ComparisonPanel } from "@/features/projects/components/comparator/comparison-panel";
 import { VersionPickerDropdown } from "@/features/projects/components/comparator/version-picker-dropdown";
+import { useVersionIssues } from "@/features/projects/hooks/use-issues.hook";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
 import {
   useVersion,
-  useVersionIssues,
   useVersions,
 } from "@/features/projects/hooks/use-versions.hook";
 import { computeIssueStats } from "@/features/projects/utils/issues-stats.utils";
@@ -49,12 +49,12 @@ export function CompareVersionsView() {
     if (version) setCurrentVersion(version);
   }, [version]);
 
-  const getCurrentIssues = useVersionIssues({
+  const { getIssues: getCurrentIssues } = useVersionIssues({
     projectId: params.projectId,
     versionId: currentVersion?.id ?? "",
   });
 
-  const getCompareIssues = useVersionIssues({
+  const { getIssues: getCompareIssues } = useVersionIssues({
     projectId: params.projectId,
     versionId: compareVersion?.id ?? "",
   });
