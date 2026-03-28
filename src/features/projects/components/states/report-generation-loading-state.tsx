@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Spinner } from "@/components/ui/spinner";
 
 export function ReportGenerationLoadingState() {
   return (
@@ -18,6 +19,7 @@ export function ReportGenerationLoadingState() {
         generating a detailed report. Please keep this page open until the
         process is complete.
       </p>
+      <Spinner className="mt-10 size-14 text-primary" />
     </div>
   );
 }

@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  Check,
   ChevronRight,
   CircleAlertIcon,
   CircleDot,
   FileText,
-  FlagTriangleRight,
   GitCompare,
   Globe,
   type LucideIcon,
@@ -145,16 +143,7 @@ export function IssueCard({
             </p>
           </div>
           <div className="flex items-center justify-between rounded-b-2xl border-t bg-gray-25 px-6 py-4">
-            <div className="flex items-center gap-3">
-              <IssueCardSeverityLabel severity={severity} />
-              <div
-                className="flex items-center gap-1.5 text-sm text-success-600"
-                hidden={!isResolved}
-              >
-                <Check className="size-4" />
-                <span className="font-medium">Resolved</span>
-              </div>
-            </div>
+            <IssueCardSeverityLabel severity={severity} />
             <div className="flex items-center gap-1.5 text-muted-foreground text-sm max-hidden:hidden">
               <span className="font-medium max-sm:hidden">Click to view</span>
               <ChevronRight className="size-4" />
@@ -200,16 +189,6 @@ export function IssueCard({
               <Badge variant="outline" className="w-fit rounded">
                 {matchLabel}
               </Badge>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div className="inline-flex items-center gap-2">
-                <FlagTriangleRight className="size-4.5 shrink-0 fill-gray-100 text-muted-foreground" />
-                <span>Status</span>
-              </div>
-              <p className="font-semibold">
-                {isResolved ? "Resolved" : "Not Resolved"}
-              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
