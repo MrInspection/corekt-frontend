@@ -1,16 +1,10 @@
-import { SettingsMobileSheet } from "@/features/shared/navigation/settings/settings-mobile-sheet";
-import {
-  DashboardContent,
-  DashboardHeader,
-} from "@/features/shared/ui/dashboard-layout";
+import type { Metadata } from "next";
+import { AchievementsView } from "@/features/achievements/views/achievements.view";
+
+export const metadata: Metadata = {
+  title: "Achievements - Corekt",
+};
 
 export default function AchievementsPage() {
-  return (
-    <>
-      <DashboardHeader className="md:hidden">
-        <SettingsMobileSheet />
-      </DashboardHeader>
-      <DashboardContent></DashboardContent>
-    </>
-  );
+  return <AchievementsView />;
 }
