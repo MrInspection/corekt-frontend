@@ -1,9 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  deleteDatalinkAction,
-  getIssuesAction,
-} from "@/features/projects/actions/issues.action";
-import {
   createVersionAction,
   deleteVersionAction,
   getVersionAction,
