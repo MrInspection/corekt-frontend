@@ -2,7 +2,7 @@
 
 import { GitCompare, XIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -11,15 +11,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
+import { CompareSection } from "@/features/projects/components/comparator/compare-section";
 import { ComparisonPanel } from "@/features/projects/components/comparator/comparison-panel";
 import { VersionPickerDropdown } from "@/features/projects/components/comparator/version-picker-dropdown";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
 import {
   useVersion,
+  useVersionIssues,
   useVersions,
 } from "@/features/projects/hooks/use-versions.hook";
+import { computeIssueStats } from "@/features/projects/utils/issues-stats.utils";
 import type { Version } from "@/features/projects/validation/versions.schema";
-import { ProjectReportView } from "@/features/projects/views/reports/project-report.view";
 import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import {
@@ -46,6 +48,26 @@ export function CompareVersionsView() {
   useEffect(() => {
     if (version) setCurrentVersion(version);
   }, [version]);
+
+  const getCurrentIssues = useVersionIssues({
+    projectId: params.projectId,
+    versionId: currentVersion?.id ?? "",
+  });
+
+  const getCompareIssues = useVersionIssues({
+    projectId: params.projectId,
+    versionId: compareVersion?.id ?? "",
+  });
+
+  const currentStats = useMemo(
+    () => computeIssueStats(getCurrentIssues.data ?? []),
+    [getCurrentIssues.data],
+  );
+
+  const compareStats = useMemo(
+    () => computeIssueStats(getCompareIssues.data ?? []),
+    [getCompareIssues.data],
+  );
 
   const currentVersionLabel = currentVersion
     ? `v${currentVersion.version} · ${currentVersion.title} (current)`
@@ -119,13 +141,22 @@ export function CompareVersionsView() {
           label={currentVersionLabel}
           isEmpty={currentVersion === null}
         >
-          <ProjectReportView />
+          <CompareSection
+            issues={getCurrentIssues.data ?? []}
+            isPending={getCurrentIssues.isPending}
+            stats={currentStats}
+          />
         </ComparisonPanel>
         <ComparisonPanel
           label={compareVersionLabel}
           isEmpty={compareVersion === null}
         >
-          <ProjectReportView />
+          <CompareSection
+            issues={getCompareIssues.data ?? []}
+            isPending={getCompareIssues.isPending}
+            stats={compareStats}
+            baseStats={currentVersion !== null ? currentStats : undefined}
+          />
         </ComparisonPanel>
       </DashboardContent>
     </>

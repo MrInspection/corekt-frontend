@@ -6,6 +6,7 @@ import {
   EmptyStateIcon,
   EmptyStateTitle,
 } from "@/features/shared/ui/empty-state";
+import { cn } from "@/lib/utils";
 
 type ComparisonPanelProps = {
   label: string;
@@ -25,7 +26,12 @@ export function ComparisonPanel({
           {label}
         </span>
       </div>
-      <div className="flex flex-1 items-center justify-center overflow-y-auto">
+      <div
+        className={cn(
+          "flex flex-1 overflow-y-auto",
+          isEmpty ? "items-center justify-center" : "items-start",
+        )}
+      >
         {isEmpty ? (
           <EmptyState>
             <EmptyStateIcon icon={GitCompare} />
