@@ -92,12 +92,6 @@ export const ISSUE_FILTER_FIELDS: FilterField[] = [
     icon: <TextIcon className="size-3.5" />,
   },
   {
-    id: "content",
-    label: "Content",
-    type: "text",
-    icon: <TextIcon className="size-3.5" />,
-  },
-  {
     id: "confidenceScore",
     label: "Confiendence Score",
     type: "number",

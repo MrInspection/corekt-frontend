@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditionsPage() {
   return (
-    <main className="w-full max-w-4xl px-6 md:mx-auto my-20">
+    <main className="my-20 w-full max-w-4xl px-6 md:mx-auto">
       {/* Hero */}
       <div className="flex flex-col items-center justify-center">
         <h1 className="mt-3 text-center text-4xl">Terms and Conditions</h1>
@@ -19,7 +19,6 @@ export default function TermsAndConditionsPage() {
 
       {/* Content */}
       <div className="mt-20 mb-28">
-
         <section className="my-8">
           <h2 className="font-medium text-xl tracking-tight">
             1. Acceptance of Terms
@@ -160,15 +159,12 @@ export default function TermsAndConditionsPage() {
         </section>
 
         <section className="my-8">
-          <h2 className="font-medium text-xl tracking-tight">
-            14. Contact
-          </h2>
+          <h2 className="font-medium text-xl tracking-tight">14. Contact</h2>
           <p className="mt-3 text-muted-foreground">
             For any questions regarding these Terms, please contact us through
             official channels provided on the platform.
           </p>
         </section>
-
       </div>
     </main>
   );

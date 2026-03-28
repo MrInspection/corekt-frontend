@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="w-full max-w-4xl px-6 container my-20">
+    <main className="container my-20 w-full max-w-4xl px-6">
       {/* Hero Section */}
       <div className="flex flex-col items-center justify-center">
         <h1 className="mt-3 text-center text-4xl">Privacy Policy</h1>
@@ -24,8 +24,8 @@ export default function PrivacyPolicyPage() {
             1. Introduction
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Corekt Labs ("we", "our", "us") is committed to protecting
-            your privacy. This Privacy Policy describes how we handle personal
+            Corekt Labs ("we", "our", "us") is committed to protecting your
+            privacy. This Privacy Policy describes how we handle personal
             information when you use our website and services.
           </p>
         </section>
