@@ -44,7 +44,7 @@ export function AchievementCard({
         </div>
       </AccordionTrigger>
       <AccordionContent className="border-t bg-gray-50 px-4 py-2">
-        Here lies the achievement conditions
+        {description}
       </AccordionContent>
     </AccordionItem>
   );
