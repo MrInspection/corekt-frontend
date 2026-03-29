@@ -5,7 +5,7 @@ import type { Issue } from "@/features/projects/validation/issues.types";
 import { actionClient, authAction } from "@/lib/safe-actions";
 import { upfetchServer } from "@/lib/up-fetch/up-fetch-server";
 
-export const getIssuesAction = actionClient
+export const startAnalysisAction = actionClient
   .inputSchema(
     z.object({
       versionId: z.uuid(),

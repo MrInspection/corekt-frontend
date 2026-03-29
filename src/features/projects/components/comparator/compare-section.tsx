@@ -4,11 +4,11 @@ import { ArrowDownIcon, ArrowUpIcon, MinusIcon } from "lucide-react";
 import { IssueCard } from "@/features/projects/components/issues/issue-card";
 import { IssuesLoadingState } from "@/features/projects/components/states/issues-loading-state";
 import type { IssueStats } from "@/features/projects/utils/issues-stats.utils";
-import type { Issue } from "@/features/projects/validation/issues.types";
+import type { Version } from "@/features/projects/validation/versions.schema";
 import { cn } from "@/lib/utils";
 
 type CompareViewProps = {
-  issues: Issue[];
+  issues: Version["dataLinks"];
   isPending: boolean;
   stats: IssueStats;
   baseStats?: IssueStats;

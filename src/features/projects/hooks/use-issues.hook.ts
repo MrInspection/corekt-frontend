@@ -1,9 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteDatalinkAction,
   exportReportToPDFAction,
-  getIssuesAction,
+  startAnalysisAction,
 } from "@/features/projects/actions/issues.action";
+import { getVersionAction } from "@/features/projects/actions/versions.action";
 import { useToastMutation } from "@/features/shared/toast-mutation/use-toast-mutation";
 
 export function useVersionIssues({
@@ -15,10 +16,18 @@ export function useVersionIssues({
 }) {
   const queryClient = useQueryClient();
 
+  const startAnalysis = useMutation({
+    mutationFn: async () => {
+      return await startAnalysisAction({ versionId, projectId }).then(
+        (res) => res?.data,
+      );
+    },
+  });
+
   const getIssues = useQuery({
     queryKey: ["issues", projectId, versionId],
     queryFn: async () => {
-      return await getIssuesAction({ projectId, versionId }).then(
+      return await getVersionAction({ projectId, versionId }).then(
         (res) => res?.data,
       );
     },
@@ -70,6 +79,7 @@ export function useVersionIssues({
   });
 
   return {
+    startAnalysis,
     getIssues,
     deleteDatalink,
     exportPDFReport,

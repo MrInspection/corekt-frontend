@@ -59,14 +59,17 @@ export function CompareVersionsView() {
     versionId: compareVersion?.id ?? "",
   });
 
+  const currentIssues = getCurrentIssues.data?.dataLinks ?? [];
+  const compareIssues = getCompareIssues.data?.dataLinks ?? [];
+
   const currentStats = useMemo(
-    () => computeIssueStats(getCurrentIssues.data ?? []),
-    [getCurrentIssues.data],
+    () => computeIssueStats(currentIssues),
+    [currentIssues],
   );
 
   const compareStats = useMemo(
-    () => computeIssueStats(getCompareIssues.data ?? []),
-    [getCompareIssues.data],
+    () => computeIssueStats(compareIssues),
+    [compareIssues],
   );
 
   const currentVersionLabel = currentVersion
@@ -142,17 +145,18 @@ export function CompareVersionsView() {
           isEmpty={currentVersion === null}
         >
           <CompareSection
-            issues={getCurrentIssues.data ?? []}
+            issues={currentIssues}
             isPending={getCurrentIssues.isPending}
             stats={currentStats}
           />
         </ComparisonPanel>
+
         <ComparisonPanel
           label={compareVersionLabel}
           isEmpty={compareVersion === null}
         >
           <CompareSection
-            issues={getCompareIssues.data ?? []}
+            issues={compareIssues}
             isPending={getCompareIssues.isPending}
             stats={compareStats}
             baseStats={currentVersion !== null ? currentStats : undefined}

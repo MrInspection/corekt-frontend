@@ -47,7 +47,9 @@ export function ProjectReportView() {
     projectId: params.projectId,
     versionId: params.version,
   });
-  const issues = getIssues.data ?? [];
+
+  const versionData = getIssues.data;
+  const issues = versionData?.dataLinks ?? [];
 
   useHotkeys("e>r", () => exportPDFReport.mutate());
 

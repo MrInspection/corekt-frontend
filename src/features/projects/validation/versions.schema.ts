@@ -27,7 +27,6 @@ export const IssueSchema = z.object({
   suggestion: z.string().nullable(),
   sourceParsedData: ParsedDataRefSchema,
   targetParsedData: ParsedDataRefSchema,
-  isResolved: z.boolean(),
 });
 
 export const VersionSchema = z.object({

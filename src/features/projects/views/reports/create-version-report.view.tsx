@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
-import { getIssuesAction } from "@/features/projects/actions/issues.action";
+import { startAnalysisAction } from "@/features/projects/actions/issues.action";
 import { ReportGenerationLoadingState } from "@/features/projects/components/states/report-generation-loading-state";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
 import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bpmn-step";
@@ -24,6 +24,7 @@ import {
 } from "@/features/shared/ui/dashboard-layout";
 import { StepIndicator } from "@/features/shared/ui/step-indicator";
 import { wait } from "@/lib/utils";
+import type { Issue } from "@/features/projects/validation/issues.types";
 
 const TOTAL_STEPS = 4;
 const ANALYSIS_RETRY_DELAY_MS = 1500;
@@ -48,27 +49,27 @@ export function CreateVersionReportView() {
     versionId: params.version,
   });
 
-  const hasInterviewData = (
-    issues: Awaited<ReturnType<typeof getIssuesAction>>["data"],
-  ) =>
-    (issues ?? []).some(
+  const hasInterviewData = (issues: Issue[]) =>
+    issues.some(
       (issue) =>
         issue.sourceParsedData.fileType === "INTERVIEW" ||
         issue.targetParsedData.fileType === "INTERVIEW",
     );
 
   const startAnalysisWithRetry = async () => {
-    let latestResult: Awaited<ReturnType<typeof getIssuesAction>> | undefined;
+    let latestResult: Issue[] | undefined;
 
     for (let attempt = 0; attempt < ANALYSIS_MAX_ATTEMPTS; attempt++) {
       if (attempt > 0) await wait(ANALYSIS_RETRY_DELAY_MS);
 
-      latestResult = await getIssuesAction({
+      const response = await startAnalysisAction({
         projectId: params.projectId,
         versionId: params.version,
       });
 
-      if (latestResult?.data && hasInterviewData(latestResult.data)) {
+      latestResult = response?.data;
+
+      if (latestResult && hasInterviewData(latestResult)) {
         return latestResult;
       }
     }
@@ -87,7 +88,7 @@ export function CreateVersionReportView() {
 
     const result = await startAnalysisWithRetry();
 
-    if (result?.data) {
+    if (result && result.length > 0) {
       setHasStarted(false);
       router.push(
         `/projects/${params.projectId}/version/${params.version}/report`,
@@ -125,6 +126,7 @@ export function CreateVersionReportView() {
           </Button>
         )}
       </DashboardHeader>
+
       <motion.div animate={controls} className="flex flex-1 flex-col">
         {isGenerating ? (
           <ReportGenerationLoadingState />
@@ -133,15 +135,18 @@ export function CreateVersionReportView() {
             <div className="text-muted-foreground text-sm">
               Step {currentStep} of {TOTAL_STEPS}
             </div>
+
             {generationFailed && (
               <p className="text-destructive text-sm">
                 Analysis failed. Please try again.
               </p>
             )}
+
             {currentStep === 1 && <UploadInterviewStep {...stepProps} />}
             {currentStep === 2 && <ImportUserStoriesStep {...stepProps} />}
             {currentStep === 3 && <UploadBpmnStep {...stepProps} />}
             {currentStep === 4 && <UploadDataModelStep {...stepProps} />}
+
             <StepIndicator
               currentStep={currentStep}
               totalSteps={TOTAL_STEPS}
@@ -150,6 +155,7 @@ export function CreateVersionReportView() {
           </DashboardContent>
         )}
       </motion.div>
+
       <div role="alertdialog">
         <ConfirmationDialog
           content={{
