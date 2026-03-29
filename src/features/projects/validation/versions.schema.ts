@@ -33,6 +33,7 @@ export const VersionSchema = z.object({
   id: z.uuid(),
   title: z.string(),
   status: z.enum(["DRAFT", "IN_PROGRESS", "COMPLETED", "FAILED"]),
+  summary: z.string(),
   version: z.number(),
   issues: z.object({
     minor: z.number(),

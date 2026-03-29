@@ -169,7 +169,7 @@ export function CreateVersionReportView() {
           onConfirm={() => {
             setHasStarted(false);
             setOpenCancelDialog(false);
-            setTimeout(() => router.push(`projects/${params.projectId}`), 150);
+            setTimeout(() => router.push(`/projects/${params.projectId}`), 150);
           }}
         />
       </div>
