@@ -15,6 +15,7 @@ import { UploadInterviewStep } from "@/features/projects/components/stepper/uplo
 import { useDirtyNavigationBlocker } from "@/features/projects/hooks/use-navigation-blocker.hook";
 import { useProject } from "@/features/projects/hooks/use-projects.hook";
 import { useVersion } from "@/features/projects/hooks/use-versions.hook";
+import type { Issue } from "@/features/projects/validation/issues.types";
 import { DashboardSidebarSheet } from "@/features/shared/navigation/dashboard/dashboard-sidebar-sheet";
 import { DynamicBreadcrumb } from "@/features/shared/navigation/dynamic-breadcrumb";
 import { ConfirmationDialog } from "@/features/shared/ui/confirmation-dialog";
@@ -24,7 +25,6 @@ import {
 } from "@/features/shared/ui/dashboard-layout";
 import { StepIndicator } from "@/features/shared/ui/step-indicator";
 import { wait } from "@/lib/utils";
-import type { Issue } from "@/features/projects/validation/issues.types";
 
 const TOTAL_STEPS = 4;
 const ANALYSIS_RETRY_DELAY_MS = 1500;
