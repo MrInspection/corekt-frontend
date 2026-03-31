@@ -27,8 +27,8 @@ import { StepIndicator } from "@/features/shared/ui/step-indicator";
 import { wait } from "@/lib/utils";
 
 const TOTAL_STEPS = 4;
-const ANALYSIS_RETRY_DELAY_MS = 1500;
-const ANALYSIS_MAX_ATTEMPTS = 6;
+const ANALYSIS_RETRY_DELAY_MS = 15000;
+const ANALYSIS_MAX_ATTEMPTS = 3;
 
 export function CreateVersionReportView() {
   const [currentStep, setCurrentStep] = useState(1);
