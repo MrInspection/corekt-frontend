@@ -159,10 +159,6 @@ export function VersionCard(props: Version & { projectId: string }) {
         {props.status === "COMPLETED" && (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-sm">
-              <CheckCircle className="size-4 text-success-600" />
-              <span>{props.issues.resolved}</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm">
               <CircleDot className="size-4 text-gray-500" />
               <span>{props.issues.minor}</span>
             </div>

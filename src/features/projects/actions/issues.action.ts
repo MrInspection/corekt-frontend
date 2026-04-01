@@ -20,6 +20,21 @@ export const startAnalysisAction = actionClient
     );
   });
 
+export const checkAnalysisReadinessAction = actionClient
+  .inputSchema(
+    z.object({
+      versionId: z.uuid(),
+      projectId: z.uuid(),
+    }),
+  )
+  .action(async ({ parsedInput: payload }) => {
+    const { versionId, projectId } = payload;
+    return await upfetchServer<{ ready: boolean; errorMessage: string | null }>(
+      `/projects/${projectId}/versions/${versionId}/analysis/ready`,
+      { method: "GET" },
+    );
+  });
+
 export const deleteDatalinkAction = actionClient
   .inputSchema(
     z.object({

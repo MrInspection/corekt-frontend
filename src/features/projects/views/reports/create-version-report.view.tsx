@@ -6,7 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth.hook";
-import { startAnalysisAction } from "@/features/projects/actions/issues.action";
+import {
+  checkAnalysisReadinessAction,
+  startAnalysisAction,
+} from "@/features/projects/actions/issues.action";
 import { ReportGenerationLoadingState } from "@/features/projects/components/states/report-generation-loading-state";
 import { ImportUserStoriesStep } from "@/features/projects/components/stepper/import-user-stories-step";
 import { UploadBpmnStep } from "@/features/projects/components/stepper/upload-bpmn-step";
@@ -27,8 +30,10 @@ import { StepIndicator } from "@/features/shared/ui/step-indicator";
 import { wait } from "@/lib/utils";
 
 const TOTAL_STEPS = 4;
-const ANALYSIS_RETRY_DELAY_MS = 15000;
-const ANALYSIS_MAX_ATTEMPTS = 3;
+const ANALYSIS_RETRY_DELAY_MS = 20000;
+const ANALYSIS_MAX_ATTEMPTS = 5;
+const READINESS_POLL_INTERVAL_MS = 3000;
+const READINESS_MAX_ATTEMPTS = 40;
 
 export function CreateVersionReportView() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -49,14 +54,26 @@ export function CreateVersionReportView() {
     versionId: params.version,
   });
 
-  const hasInterviewData = (issues: Issue[]) =>
-    issues.some(
-      (issue) =>
-        issue.sourceParsedData.fileType === "INTERVIEW" ||
-        issue.targetParsedData.fileType === "INTERVIEW",
-    );
+  const waitForAnalysisReady = async (): Promise<boolean> => {
+    for (let attempt = 0; attempt < READINESS_MAX_ATTEMPTS; attempt++) {
+      if (attempt > 0) await wait(READINESS_POLL_INTERVAL_MS);
 
-  const startAnalysisWithRetry = async () => {
+      const response = await checkAnalysisReadinessAction({
+        projectId: params.projectId,
+        versionId: params.version,
+      });
+
+      if (!response || response.serverError || response.validationErrors) return false;
+      if (response.data?.ready) return true;
+    }
+
+    return false;
+  };
+
+  const startAnalysisWithRetry = async (): Promise<Issue[] | undefined> => {
+    const isReady = await waitForAnalysisReady();
+    if (!isReady) return undefined;
+
     let latestResult: Issue[] | undefined;
 
     for (let attempt = 0; attempt < ANALYSIS_MAX_ATTEMPTS; attempt++) {
@@ -67,11 +84,11 @@ export function CreateVersionReportView() {
         versionId: params.version,
       });
 
-      latestResult = response?.data;
+      if (!response || response.serverError || response.validationErrors) break;
 
-      if (latestResult && hasInterviewData(latestResult)) {
-        return latestResult;
-      }
+      latestResult = response.data;
+
+      if (latestResult && latestResult.length > 0) return latestResult;
     }
 
     return latestResult;
